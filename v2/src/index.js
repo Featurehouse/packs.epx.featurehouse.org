@@ -18,5 +18,6 @@
                 result += '0123456789abcdef'.charAt(Math.floor(Math.random() * 16));
             }
             return result;
-        })(7) + '-v2.zip'));
+        })(7) + '-v2.zip');
+    });
 })();
