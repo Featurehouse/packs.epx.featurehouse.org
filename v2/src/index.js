@@ -11,11 +11,12 @@
     })();
     let url = args.zipconfig;
     if (!url) url = '/epx_packs/v2/dl/zipconfig.json';
-    saveAs(generateZipFromUrl(args, url), 'epx_recommended_pack-' + (function(length) {
-        var result = '';
-        for (var i = 0; i < length; i++) {
-            result += '0123456789abcdef'.charAt(Math.floor(Math.random() * 16));
-        }
-        return result;
-    })(7) + '-v2.zip');
+    generateZipFromUrl(args, url, function(blob) {
+        saveAs(blob, 'epx_recommended_pack-' + (function(length) {
+            var result = '';
+            for (var i = 0; i < length; i++) {
+                result += '0123456789abcdef'.charAt(Math.floor(Math.random() * 16));
+            }
+            return result;
+        })(7) + '-v2.zip'));
 })();

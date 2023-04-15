@@ -1,4 +1,4 @@
-const generateZipFromUrl = async (url, params) => {
+const generateZipFromUrl = function(url, params, func) {
   // 辅助函数：向zip对象添加一个文件
   function addFileToZip(zip, fileName, data) {
       if (fileName.endsWith('/')) {
@@ -6,8 +6,8 @@ const generateZipFromUrl = async (url, params) => {
       } else {
           if (data.fetch) {
               fetch(data.fetch)
-              .then(response => response.blob())
-              .then(blob => zip.file(fileName, blob));
+              .then(function(response) { return response.blob(); })
+              .then(function(blob) { return zip.file(fileName, blob); });
           } else if (data.base64) {
               zip.file(fileName, data.base64, {base64:true});
           } else if (data.raw) {
@@ -78,6 +78,5 @@ const generateZipFromUrl = async (url, params) => {
     }
   }
 
-  const content = await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:5}});
-  return content;
+  zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:5}}).then(func);
 };
