@@ -10,12 +10,16 @@ _HERE = os.path.dirname(sys.argv[0])
 METADATA = os.path.join(_HERE, 'translation_metadata.json')
 METADATA_STATIC = os.path.join(_HERE, 'static.json')
 METADATA_DYNAMIC = os.path.join(_HERE, 'dynamic_other.json')
+SPLASH_DIR = os.path.join(_HERE, 'splashes')
 WEB_ROOT = '/epx_packs/'
 DEST = os.path.join(_HERE, 'dl/zipconfig.json')
 
 def readjson(fn):
     with open(fn) as f:
         return json.load(f)
+
+def listdir(d):
+    return list(os.path.join(d, x) for x in os.listdir(d) if x.endswith('.json'))
 
 
 def fixup(d):
@@ -30,6 +34,16 @@ def fixup(d):
             o['fetch'] = WEB_ROOT + o['fetch']
 
 
+def resolve_splashes():
+    add = []
+    remove = []
+    for fn in listdir(SPLASH_DIR):
+        j = readjson(fn)
+        add += j.get('add', [])
+        remove += j.get('remove', [])
+    return {'add':add,'remove':remove}
+
+
 def main():
     l = readjson(METADATA).get('translations', [])
     s = readjson(METADATA_STATIC)
@@ -40,6 +54,12 @@ def main():
     fixup(dynamic)
     out['dynamic'] = dynamic
     
+    # Splashes
+    sp = resolve_splashes()
+    with open(os.path.join(_HERE, 'splashes.gen'), 'w') as f:
+        json.dump(sp, f)
+    
+    # Poem
     poem_dict = []
     dynamic['poem'] = {'default': 'random', 'items': poem_dict}
     

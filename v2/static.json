@@ -6,7 +6,7 @@
 		"fetch": "nopool/v2/zh_hk.txt"
 	},
 	"assets/minecraft/texts/splash_modify.json": {
-		"fetch": "nopool/v2/splash_modify.json"
+		"fetch": "v2/splashes.gen"
 	},
 	"assets/end_poem_extension/recommended/postcredits/zh_hk.txt": {
 		"fetch": "nopool/v2/postcredits.zh_hant.txt"
