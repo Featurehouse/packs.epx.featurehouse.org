@@ -1,1 +1,21 @@
-{} 
+{
+    "splashes": {
+        "default": 0,
+        "items": [
+            {
+                "files": {
+                    "assets/minecraft/texts/splash_modify.json": {
+                        "fetch": "v2/splashes.gen"
+                    }
+                }
+            },
+            {
+                "files": {
+                    "assets/minecraft/texts/splash_modify.json": {
+                        "fetch": "nopool/v2/splash_rickroll.json"
+                    }
+                }
+            }
+        ]
+    }
+} 
