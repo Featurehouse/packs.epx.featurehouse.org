@@ -51,7 +51,10 @@ def main():
     out = {'static': s}
     
     dynamic = readjson(METADATA_DYNAMIC)
-    fixup(dynamic)
+    #fixup(dynamic)
+    for k in dynamic:
+        for v in dynamic[k].get('items', []):
+            fixup(v.get('files'), {})
     out['dynamic'] = dynamic
     
     # Splashes
