@@ -1,13 +1,13 @@
-const generateZipFromUrl = function(url, params, func) {
+const generateZipFromUrl = async function(url, params, func) {
   // 辅助函数：向zip对象添加一个文件
-  function addFileToZip(zip, fileName, data) {
+  async function addFileToZip(zip, fileName, data) {
       if (fileName.endsWith('/')) {
           zip.folder(fileName.slice(0, -1));
       } else {
           if (data.fetch) {
-              fetch(data.fetch)
-              .then(function(response) { return response.blob(); })
-              .then(function(blob) { return zip.file(fileName, blob); });
+              const response = await fetch(data.fetch);
+              const blob = await response.blob();
+              zip.file(fileName, blob);
           } else if (data.base64) {
               zip.file(fileName, data.base64, {base64:true});
           } else if (data.raw) {
@@ -18,31 +18,32 @@ const generateZipFromUrl = function(url, params, func) {
       }
   }
 
-  fetch(url).then(function(response){response.json().then(function(jsonData){
-    const zip = new JSZip();
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  const zip = new JSZip();
 
-    // 处理 static 字段
-    const staticFiles = jsonData.static;
-    for (const filename in staticFiles) {
-      const fileData = staticFiles[filename];
-      addFileToZip(zip, filename, fileData);
+  // 处理 static 字段
+  const staticFiles = jsonData.static;
+  for (const filename in staticFiles) {
+    const fileData = staticFiles[filename];
+    await addFileToZip(zip, filename, fileData);
+  }
+
+  // 处理 dynamic 字段
+  const dynamicFiles = jsonData.dynamic;
+  for (const key in dynamicFiles) {
+    const dynamicData = dynamicFiles[key];
+    let paramValue = params[key];
+    if (isNaN(parseInt(paramValue))) {
+        paramValue = dynamicData.default;
     }
 
-    // 处理 dynamic 字段
-    const dynamicFiles = jsonData.dynamic;
-    for (const key in dynamicFiles) {
-      const dynamicData = dynamicFiles[key];
-      let paramValue = params[key];
-      if (isNaN(parseInt(paramValue))) {
-        paramValue = dynamicData.default;
-      }
-
-      if (paramValue === 'random') {
+    if (paramValue === 'random') {
         const items = dynamicData.items;
         let totalWeight = 0;
         for (const item of items) {
           if (!item.weight) {
-            item.weight = 100;
+              item.weight = 100;
           }
           totalWeight += item.weight;
         }
@@ -52,31 +53,30 @@ const generateZipFromUrl = function(url, params, func) {
         for (const item of items) {
           randomNum -= item.weight;
           if (randomNum < 0) {
-            selectedItem = item;
-            break;
+              selectedItem = item;
+              break;
           }
         }
 
         if (selectedItem) {
           const files = selectedItem.files;
           for (const filename in files) {
-            const fileData = files[filename];
-            addFileToZip(zip, filename, fileData);
+              const fileData = files[filename];
+              await addFileToZip(zip, filename, fileData);
           }
         }
-      } else {
+    } else {
         const itemIndex = parseInt(paramValue);
         const items = dynamicData.items;
         if (items[itemIndex]) {
           const files = items[itemIndex].files;
           for (const filename in files) {
-            const fileData = files[filename];
-            addFileToZip(zip, filename, fileData);
+              const fileData = files[filename];
+              await addFileToZip(zip, filename, fileData);
           }
         }
-      }
     }
+  }
 
-    zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:5}}).then(func);
-  })});
+  zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:5}}).then(func);
 };

@@ -4,14 +4,14 @@
         const vars = query.split('&');
         const result = {};
         for (let i = 0; i < vars.length; i++) {
-        const pair = vars[i].split('=');
-        result[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+            const pair = vars[i].split('=');
+            result[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
         }
         return result;
     })();
     let url = args.zipconfig;
     if (!url) url = '/epx_packs/v2/dl/zipconfig.json';
-    generateZipFromUrl(args, url, function(blob) {
+    generateZipFromUrl(url, args, function(blob) {
         saveAs(blob, 'epx_recommended_pack-' + (function(length) {
             var result = '';
             for (var i = 0; i < length; i++) {
