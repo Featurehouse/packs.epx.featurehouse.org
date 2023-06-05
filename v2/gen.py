@@ -31,7 +31,7 @@ WEB_ROOT = '/epx_packs/'
 DEST = os.path.join(_HERE, 'dl/zipconfig.json')
 
 def readjson(fn):
-    with open(fn) as f:
+    with open(fn, encoding='utf8') as f:
         return json.load(f)
 
 def listdir(d):
@@ -50,10 +50,10 @@ def fixup(d):
             o['fetch'] = WEB_ROOT + o['fetch']
 
 
-def resolve_splashes():
+def resolve_splashes(splashDir):
     add = []
     remove = []
-    for fn in listdir(SPLASH_DIR):
+    for fn in listdir(splashDir):
         j = readjson(fn)
         add += j.get('add', [])
         remove += j.get('remove', [])
@@ -74,9 +74,14 @@ def main():
     out['dynamic'] = dynamic
     
     # Splashes
-    sp = resolve_splashes()
-    with open(os.path.join(_HERE, 'splashes.gen'), 'w') as f:
+    sp = resolve_splashes(SPLASH_DIR)
+    with open(os.path.join(_HERE, 'splashes.gen'), 'w', encoding='utf8') as f:
         json.dump(sp, f)
+    # Splash - others type2/3
+    for subdir in ('type-2', 'type-3'):
+        sp0 = resolve_splashes(os.path.join(SPLASH_DIR, subdir))
+        with open(os.path.join(_HERE, f'splashes-{subdir}.gen'), 'w', encoding='utf8') as f:
+            json.dump(sp0, f)
     
     # Poem
     poem_dict = []
@@ -89,12 +94,12 @@ def main():
         if o.get('metadata'):
             files['assets/end_poem_extension/texts/end_poem/zh_cn.copyright'] = {'base64': base64.b64encode(json.dumps(o['metadata']).encode('utf-8')).decode('ascii')}
     
-    with open(DEST, 'w') as f:
+    with open(DEST, 'w', encoding='utf8') as f:
         json.dump(out, f)
 
 
 if __name__ == "__main__":
     # time
-    with open(os.path.join(_HERE, 'version.txt'), 'w') as f:
+    with open(os.path.join(_HERE, 'version.txt'), 'w', encoding='utf8') as f:
         f.write(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).isoformat('T', "seconds"))
     main()

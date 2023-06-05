@@ -15,6 +15,21 @@
                         "fetch": "nopool/v2/splash_rickroll.json"
                     }
                 }
+            },
+            {
+                "files": {
+                    "assets/minecraft/texts/splash_modify.json": {
+                        "fetch": "v2/splashes-type-2.gen"
+                    }
+                }
+            },
+            {
+                "files": {
+                    "assets/minecraft/texts/splash_modify.json": {
+                        "fetch": "v2/splashes-type-3.gen"
+                    }
+                },
+                "weight": 80
             }
         ]
     }
