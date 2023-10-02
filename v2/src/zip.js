@@ -34,6 +34,8 @@ const generateZipFromUrl = async function(url, params, func) {
   for (const key in dynamicFiles) {
     const dynamicData = dynamicFiles[key];
     let paramValue = params[key];
+
+    if (paramValue !== 'random')	// patch-231002-2: in case `arg=random` is overriden by default value
     if (isNaN(parseInt(paramValue))) {
         paramValue = dynamicData.default;
     }
