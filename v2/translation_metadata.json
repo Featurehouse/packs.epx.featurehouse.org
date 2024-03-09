@@ -38,8 +38,8 @@
             "demo": "demo/0005-miemiemethod.txt",
             "metadata": {
                 "author": "Miemiemethod",
-                "homepage": "https://minecraft.fandom.com/zh/wiki/User:Miemiemethod",
-                "link": "https://minecraft.fandom.com/zh/wiki/User:Miemiemethod/End_Poem",
+                "homepage": "https://zh.minecraft.wiki/w/User:Miemiemethod",
+                "link": "https://zh.minecraft.wiki/w/User:Miemiemethod/End_Poem",
                 "license": "CC-BY-SA 3.0"
             }
         },
@@ -48,9 +48,9 @@
             "demo": "demo/0006-olvcpr423.txt",
             "metadata": {
                 "author": "Olvcpr423",
-                "link": "https://minecraft.fandom.com/zh/wiki/User:Olvcpr423/End_Poem",
+                "link": "https://zh.minecraft.wiki/w/User:Olvcpr423/End_Poem",
                 "license": "CC-BY-SA 3.0",
-                "homepage": "https://minecraft.fandom.com/zh/wiki/User:Olvcpr423"
+                "homepage": "https://zh.minecraft.wiki/w/User:Olvcpr423"
             }
         },
         {
@@ -66,7 +66,7 @@
             "raw": "raw/0008.txt",
             "demo": "demo/0008-mczhwiki.txt",
             "metadata": {
-                "link": "https://minecraft.fandom.com/zh/wiki/%E7%BB%88%E6%9C%AB%E4%B9%8B%E8%AF%97/text",
+                "link": "https://zh.minecraft.wiki/w/%E7%BB%88%E6%9C%AB%E4%B9%8B%E8%AF%97/text",
                 "license": "CC-BY-SA 3.0"
             }
         }
