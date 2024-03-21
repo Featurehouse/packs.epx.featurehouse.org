@@ -107,7 +107,7 @@ def main():
             json.dump(sp0, f)
     # Splash (txt) - whisper, using blank type4
     for subdir in ('whisper-1',):
-        sp0 = resolve_splashes(os.path.join(SPLASH_DIR, subdir), text=True):
+        sp0 = resolve_splashes(os.path.join(SPLASH_DIR, subdir), text=True)
         with open(os.path.join(_HERE, f'splashes-text-{subdir}.gen'), 'w', encoding='utf8') as f:
             json.dump(sp0, f)
     
