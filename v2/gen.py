@@ -57,8 +57,8 @@ def text_to_splashes(fn):
     return {'add':add,'remove':remove}
 
 
-def listdir(d):
-    return list(os.path.join(d, x) for x in os.listdir(d) if x.endswith('.json'))
+def listdir(d, suffix='.json'):
+    return list(os.path.join(d, x) for x in os.listdir(d) if x.endswith(suffix))
 
 
 def fixup(d):
@@ -76,7 +76,7 @@ def fixup(d):
 def resolve_splashes(splashDir, text=False):
     add = []
     remove = []
-    for fn in listdir(splashDir):
+    for fn in listdir(splashDir, '.txt' if text else '.json'):
         j = readjson(fn) if not text else text_to_splashes(fn)
         add += j.get('add', [])
         remove += j.get('remove', [])
