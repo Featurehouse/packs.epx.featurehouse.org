@@ -30,7 +30,30 @@
                     }
                 },
                 "weight": 80
+            },
+            {
+            	"files": {},
+            	"weight": 2
             }
         ]
+    },
+    "splashes-whisper": {
+    	"default": 0,
+    	"items": [
+    		{
+    			"files": {},
+    			"weight": 2
+    		},
+    		{
+    			"files": {
+    				"assets/minecraft/texts/splash_modify.json": {
+    					"fetch": "v2/splashes-text-whisper-1.gen"
+    				},
+    				"assets/minecraft/texts/splashes.txt": {
+    					"raw": ""
+    				}
+    			}
+    		}
+    	]
     }
 } 

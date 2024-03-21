@@ -34,6 +34,29 @@ def readjson(fn):
     with open(fn, encoding='utf8') as f:
         return json.load(f)
 
+def text_to_splashes(fn):
+    add = []
+    remove = []
+
+    with open(fn, encoding='utf8') as f:
+        for ln in f:
+            ln = ln.strip()
+            if not ln or ln.startswith('#'):
+                continue
+            target = add
+            if ln.startswith('!'):
+                if ln.startswith('!!') or ln.startswith('!#'):
+                    ln = ln[1:]
+                else:
+                    target = remove
+                    ln = ln[1:].strip()
+                if not ln:
+                    continue
+            target.append(ln)
+
+    return {'add':add,'remove':remove}
+
+
 def listdir(d):
     return list(os.path.join(d, x) for x in os.listdir(d) if x.endswith('.json'))
 
@@ -50,11 +73,11 @@ def fixup(d):
             o['fetch'] = WEB_ROOT + o['fetch']
 
 
-def resolve_splashes(splashDir):
+def resolve_splashes(splashDir, text=False):
     add = []
     remove = []
     for fn in listdir(splashDir):
-        j = readjson(fn)
+        j = readjson(fn) if not text else text_to_splashes(fn)
         add += j.get('add', [])
         remove += j.get('remove', [])
     return {'add':add,'remove':remove}
@@ -81,6 +104,11 @@ def main():
     for subdir in ('type-2', 'type-3'):
         sp0 = resolve_splashes(os.path.join(SPLASH_DIR, subdir))
         with open(os.path.join(_HERE, f'splashes-{subdir}.gen'), 'w', encoding='utf8') as f:
+            json.dump(sp0, f)
+    # Splash (txt) - whisper, using blank type4
+    for subdir in ('whisper-1',):
+        sp0 = resolve_splashes(os.path.join(SPLASH_DIR, subdir), text=True):
+        with open(os.path.join(_HERE, f'splashes-text-{subdir}.gen'), 'w', encoding='utf8') as f:
             json.dump(sp0, f)
     
     # Poem
