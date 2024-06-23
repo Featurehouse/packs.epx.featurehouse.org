@@ -13,7 +13,7 @@ Feel free to send a PR if you have good translations!
 as an example.
 It depends on you whether to include the original English script - For Chinese versions, we chose yes.
 3. **Add your file to [`static.json`])(https://github.com/Featurehouse/epx_packs/blob/master/v2/static.json)**. Fill the JSON key with filename specified in the [mod description](https://modrinth.com/mod/end-poem-extension), and value with [file object](#file-object-format).
-```json
+```json5
 {
   //...
   "assets/end_poem_extension/texts/end_poem/fr_fr.txt": {
