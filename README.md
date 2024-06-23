@@ -15,11 +15,11 @@ It depends on you whether to include the original English script - For Chinese v
 3. **Add your file to [`static.json`])(https://github.com/Featurehouse/epx_packs/blob/master/v2/static.json)**. Fill the JSON key with filename specified in the [mod description](https://modrinth.com/mod/end-poem-extension), and value with [file object](#file-object-format).
 ```json
 {
-  ...
+  //...
   "assets/end_poem_extension/texts/end_poem/fr_fr.txt": {
     "fetch": "nopool/v2/fr_fr.txt"
   }
-  ...
+  //...
 }
 ```
 Of course, you are allowed to add a copyright file to the ZIP. For example, create a `fr_fr.copyright` file with a [plaintext file object](#file-object-format).
