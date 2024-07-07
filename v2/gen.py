@@ -69,7 +69,7 @@ def fixup(d):
         # Legacy compat
         if o.get('file'):
             o['fetch'] = o['file']
-        if o.get('fetch') and (not o.startswith('https://')):
+        if o.get('fetch') and (not o['fetch'].startswith('https://')):
             o['fetch'] = WEB_ROOT + o['fetch']
 
 
