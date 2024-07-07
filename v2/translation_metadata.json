@@ -2,7 +2,7 @@
     "_comment": [
     	"Due to historical namings, object `translations` is exclusive to Simplified Chinese (`zh_cn`) translations.",
     	"For other languages that have multiple translations for End Poem, add them to `other_i18n`."
-    ]
+    ],
     "translations": [
         {
             "raw": "raw/0001.txt",
