@@ -69,7 +69,7 @@ def fixup(d):
         # Legacy compat
         if o.get('file'):
             o['fetch'] = o['file']
-        if o.get('fetch'):
+        if o.get('fetch') and (not o.startswith('https://')):
             o['fetch'] = WEB_ROOT + o['fetch']
 
 
@@ -84,7 +84,11 @@ def resolve_splashes(splashDir, text=False):
 
 
 def main():
-    l = readjson(METADATA).get('translations', [])
+    translation_metadata = readjson(METADATA)
+    zh_cn_poem = translation_metadata.get('translations', [])
+    i18n_poem = translation_metadata.get('other_i18n', {})
+    i18n_poem['zh_cn'] = zh_cn_poem
+    
     s = readjson(METADATA_STATIC)
     fixup(s)
     out = {'static': s}
@@ -114,13 +118,19 @@ def main():
     # Poem
     poem_dict = []
     dynamic['poem'] = {'default': 'random', 'items': poem_dict}
-    
-    for o in l:
-        files = {}
-        poem_dict.append({'files': files})
-        files['assets/end_poem_extension/texts/end_poem/zh_cn.txt'] = {'fetch': WEB_ROOT + o['raw']}
-        if o.get('metadata'):
-            files['assets/end_poem_extension/texts/end_poem/zh_cn.copyright'] = {'base64': base64.b64encode(json.dumps(o['metadata']).encode('utf-8')).decode('ascii')}
+
+    for lang, l in i18n_poem.items():
+        if lang != 'zh_cn' and l:
+            dynamic[f'poem-{lang}'] = {'default': 'random', 'items': []}
+        for o in l:
+            files = {}
+            if lang == 'zh_cn':
+                poem_dict.append({'files': files})
+            else:
+                dynamic[f'poem-{lang}']['items'].append({'files': files})
+            files[f'assets/end_poem_extension/texts/end_poem/{lang}.txt'] = {'fetch': WEB_ROOT + o['raw']}
+            if o.get('metadata'):
+                files['assets/end_poem_extension/texts/end_poem/{lang}.copyright'] = {'base64': base64.b64encode(json.dumps(o['metadata']).encode('utf-8')).decode('ascii')}
     
     with open(DEST, 'w', encoding='utf8') as f:
         json.dump(out, f)
