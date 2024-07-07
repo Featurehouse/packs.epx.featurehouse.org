@@ -121,7 +121,11 @@ def main():
 
     for lang, l in i18n_poem.items():
         if lang != 'zh_cn' and l:
-            dynamic[f'poem-{lang}'] = {'default': 'random', 'items': []}
+            default_index = 'random'
+            default_index0 = translation_metadata.get('default_indexes', {}).get(lang)
+            if default_index0 is not None:
+                default_index = default_index0
+            dynamic[f'poem-{lang}'] = {'default': default_index, 'items': []}
         for o in l:
             files = {}
             if lang == 'zh_cn':
