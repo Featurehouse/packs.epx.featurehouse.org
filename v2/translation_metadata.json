@@ -97,7 +97,7 @@
     			"raw": "raw/lzh-0001.txt",
     			"demo": "demo/lzh-0001-teahouse.txt",
     			"metadata": {
-    			    "copyright_holder": "Copyright 2020-2021 Teahouse Studios & other contributors"
+    			    "copyright_holder": "Copyright 2020-2021 Teahouse Studios & other contributors",
     				"link": "https://github.com/Teahouse-Studios/minecraft-lzh/blob/master/minecraft-lzh/assets/minecraft/texts/end.txt",
     				"homepage": "https://github.com/Teahouse-Studios/minecraft-lzh",
     				"license": "Apache-2.0"
