@@ -127,11 +127,12 @@ def main():
                 default_index = default_index0
             dynamic[f'poem-{lang}'] = {'default': default_index, 'items': []}
         for o in l:
+            weight = o.get('weight', 100)
             files = {}
             if lang == 'zh_cn':
-                poem_dict.append({'files': files})
+                poem_dict.append({'files': files, 'weight': weight})
             else:
-                dynamic[f'poem-{lang}']['items'].append({'files': files})
+                dynamic[f'poem-{lang}']['items'].append({'files': files, 'weight': weight})
             files[f'assets/end_poem_extension/texts/end_poem/{lang}.txt'] = {'fetch': WEB_ROOT + o['raw']}
             if o.get('metadata'):
                 files[f'assets/end_poem_extension/texts/end_poem/{lang}.copyright'] = {'base64': base64.b64encode(json.dumps(o['metadata']).encode('utf-8')).decode('ascii')}
