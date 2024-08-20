@@ -37,7 +37,7 @@ A. Plain text:
 (it is recommended to avoid using non-ASCII characters. If you have to, escape them: `\u516d`)
 ```json
 {
-  "text": "#!/usr/bin/env python3\nprint('Hello World')"
+  "raw": "#!/usr/bin/env python3\nprint('Hello World')"
 }
 ```
 
