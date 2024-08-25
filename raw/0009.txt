@@ -13,7 +13,7 @@
 §3我喜欢这个玩家。TA玩得很好。TA从未放弃。
 
 §2It is reading our thoughts as though they were words on a screen.
-§2TA正在阅读我们的思绪，但是在他（她）看来，他（她）只不过是在阅读屏幕上的文字。
+§2TA正在阅读我们的思绪，但是在TA看来，TA只不过是在阅读屏幕上的文字。
 
 §3That is how it chooses to imagine many things, when it is deep in the dream of a game.
 §3在TA深陷游戏梦境中时，TA选择以这种方式想象出形形色色的事物。
@@ -115,7 +115,7 @@
 §2很久以前，有一个玩家。
 
 §3The player was you, PLAYERNAME.
-§3那玩家就是你，PLAYERNAME.
+§3那玩家就是你，PLAYERNAME。
 
 §2Sometimes it thought itself human, on the thin crust of a spinning globe of molten rock. The ball of molten rock circled a ball of blazing gas that was three hundred and thirty thousand times more massive than it. They were so far apart that light took eight minutes to cross the gap. The light was information from a star, and it could burn your skin from a hundred and fifty million kilometres away.
 §2有时TA认为自己是那不断旋转的球体上一层薄薄的熔化的岩石上的人类。那融化的岩石星球环绕着一个质量大它三十三万倍的炽热气体星球旋转。它们是相隔得如此之远，以至于光需要八分钟才能穿越它们间的鸿沟。那光是来自一颗恒星的信息，它能够在一亿五千万公里外烧灼你的皮肤。
