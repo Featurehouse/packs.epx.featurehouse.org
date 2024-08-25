@@ -87,7 +87,10 @@
         	"metadata": {
         		"link": "https://www.bilibili.com/video/BV1Ex411S7jd",
         		"homepage": "https://space.bilibili.com/33794499",
-        		"author": "Ksharp_青辰"
+        		"author": "Ksharp_青辰",
+        		"note": [
+        			"To improve text fluency, all the 3rd-perspective pronouns are replaced with \"TA\"."
+        		]
         	}
         }
     ],
