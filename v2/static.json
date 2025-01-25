@@ -1,6 +1,6 @@
 {
 	"pack.mcmeta": {
-		"base64": "eyJwYWNrIjp7InBhY2tfZm9ybWF0IjoxMCwiZGVzY3JpcHRpb24iOlsiIix7InRleHQiOiJBbHRlcm5hdGl2ZSBFbmQgUG9lbSBUcmFuc2xhdGlvbnNcbiIsImNvbG9yIjoieWVsbG93IiwiYm9sZCI6dHJ1ZX0sIlJlcXVpcmVzIEVuZCBQb2VtIEV4dGVuc2lvbiBtb2QiXX19"
+	    "fetch": "nopool/v2/pack.mcmeta"
 	},
 	"assets/end_poem_extension/texts/end_poem/zh_hk.txt": {
 		"fetch": "nopool/v2/zh_hk.txt"
