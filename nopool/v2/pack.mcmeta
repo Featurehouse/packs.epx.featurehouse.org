@@ -4,6 +4,6 @@
     "description": [
       "", {"text": "Alternative End Poem Translations\n", "color": "yellow", "bold":true},"Requires End Poem Extension mod"
     ],
-    "supported_formats": {"pack":{"pack_format":10,"description":["",{"text":"Alternative End Poem Translations\n","color":"yellow","bold":true},"Requires End Poem Extension mod"]}}
+    "supported_formats": [16, 9999999]
   }
 }
