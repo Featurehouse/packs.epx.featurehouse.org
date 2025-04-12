@@ -1,9 +1,9 @@
 {
-    "add": [
-        "Привет Россия!",
-        "End Poem Extension!"
-    ],
-    "remove": [
-        "Vanilla!"
-    ]
-} 
+  "add": [
+    "Привет Россия!",
+    "End Poem Extension!"
+  ],
+  "remove": [
+    "Vanilla!"
+  ]
+}
