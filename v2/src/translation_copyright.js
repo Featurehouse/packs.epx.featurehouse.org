@@ -129,5 +129,6 @@ function readTranslations(translationObject, websiteI18n, root) {
             result += '</ul></div></li>';
         });
         result += '</ul></div></p></div></div>';
-    })
+    });
+    return result;
 }
