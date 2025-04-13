@@ -70,6 +70,7 @@
         };
         const usedI18n = i18n[selectLanguage(Object.keys(i18n), window.navigator.languages || [])];
         const insertedContent = readTranslations(translationObject, usedI18n, '/epx_packs/');
+        document.getElementById('panel').innerHTML = insertedContent;
     })();
 </script>
 </body>
