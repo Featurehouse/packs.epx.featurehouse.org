@@ -134,8 +134,7 @@ def main():
             else:
                 dynamic[f'poem-{lang}']['items'].append({'files': files, 'weight': weight})
             files[f'assets/end_poem_extension/texts/end_poem/{lang}.txt'] = {'fetch': WEB_ROOT + o['raw']}
-            if o.get('metadata'):
-                files[f'assets/end_poem_extension/texts/end_poem/{lang}.copyright'] = {'base64': base64.b64encode(json.dumps(o['metadata']).encode('utf-8')).decode('ascii')}
+            files[f'assets/end_poem_extension/texts/end_poem/{lang}.metadata'] = {'base64': base64.b64encode(json.dumps(o).encode('utf-8')).decode('ascii')}
     
     with open(DEST, 'w', encoding='utf8') as f:
         json.dump(out, f)

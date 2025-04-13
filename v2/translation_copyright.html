@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EPX Recommended Pack - Credits</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script type="text/javascript" src="src/translation_copyright.js"></script>
+</head>
+<body>
+<section class="section">
+    <div class="container">
+        <h1 class="title is-2 has-text-centered mb-6">EPX Recommended Pack - Credits</h1>
+
+        <div class="columns is-multiline" id="panel">
+        </div>
+
+        <div class="column is-4">
+            <article class="message is-dark">
+                <div class="message-header">
+                    <p>🔗 Links</p>
+                </div>
+                <div class="message-body">
+                    <ul class="is-size-6">
+                        <li><a href="https://modrinth.com/mod/end-poem-extension">End Poem Extension</a> <span class='tag is-primary is-light'>Mod</span></li>
+                        <li><a href="https://github.com/Featurehouse/epx_packs">Repository of EPX Recommended Packs</a> <span class='tag is-warning is-dark'>Contribute!</span></li>
+                        <li><a href="https://www.mcmod.cn/class/10478.html">MCMOD</a><span tag='tag is-warning is-light'>中文</span></li>
+                    </ul>
+                </div>
+            </article>
+        </div>
+</section>
+<script type="text/javascript">
+    (async function(){
+        "use strict";
+
+        const translationObject = await fetch('translation_metadata.json')
+            .then(async (r) => JSON.parse(await r.text()));
+
+        const i18n = {
+            "en-US": {
+                'lang.en_us': "English (US)",
+                'lang.zh_cn': "Chinese (Simplified)",
+                'lang.lzh': "Literal Chinese",
+                'lang.zh_hk': "Chinese (Traditional, HK)",
+                'lang.zh_tw': "Chinese (Traditional, TW)",
+                'metadata.author': 'Author',
+                'metadata.link': 'Link',
+                'metadata.homepage': 'Homepage',
+                'metadata.license': 'License',
+            },
+            "zh-CN": {
+                'lang.en_us': "美式英语",
+                'lang.zh_cn': "简体中文",
+                'lang.lzh': "文言",
+                'lang.zh_hk': "繁体中文（香港）",
+                'lang.zh_tw': "繁体中文（台湾）",
+                'metadata.author': '作者',
+                'metadata.link': '链接',
+                'metadata.homepage': '主页',
+                'metadata.license': '许可证',
+            },
+            "zh-TW": {
+                'lang.en_us': "美式英语",
+                'lang.zh_cn': "簡體中文",
+                'lang.lzh': "文言",
+                'lang.zh_hk': "繁體中文（香港）",
+                'lang.zh_tw': "繁體中文（臺灣）",
+            },
+        };
+        const usedI18n = i18n[selectLanguage(Object.keys(i18n), window.navigator.languages || [])];
+        const insertedContent = readTranslations(translationObject, usedI18n, '/epx_packs/');
+    })();
+</script>
+</body>
+</html>
