@@ -89,7 +89,7 @@ function readTranslations(translationObject, websiteI18n, root) {
         result += `
             <div class="column is-6">
                 <div class="panel">
-                    <p class="panel-heading has-background-primary-light>${getTranslation('language.' + lang, lang)}</p>
+                    <p class="panel-heading has-background-primary-light">${getTranslation('lang.' + lang, lang)}</p>
                     <div class="panel-block">
                         <ul class="content ml-2">
         `;
@@ -126,9 +126,9 @@ function readTranslations(translationObject, websiteI18n, root) {
                 }
             });
             if (lastListExpanded) console.warn('Weird list unclosed:', lastListExpanded);
-            result += '</ul></div></li>';
+            result += '</ul></li>';
         });
-        result += '</ul></div></p></div></div>';
+        result += '</ul></div></div></div>';
     });
     return result;
 }
