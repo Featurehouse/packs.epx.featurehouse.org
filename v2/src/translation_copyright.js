@@ -77,7 +77,7 @@ function readTranslations(translationObject, websiteI18n, root) {
     };
 
     const toLink = function(text, link) {
-        return `<span class="is-link"><a href="${new URL(link, root)}">${text}</a></span>`;
+        return `<span class="is-link"><a href="${new URL(link, new URL(root, window.location))}">${text}</a></span>`;
     };
 
     var result = '';
