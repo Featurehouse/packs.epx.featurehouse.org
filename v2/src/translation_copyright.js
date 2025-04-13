@@ -80,55 +80,68 @@ function readTranslations(translationObject, websiteI18n, root) {
         return `<span class="is-link"><a href="${new URL(link, new URL(root, window.location))}">${text}</a></span>`;
     };
 
-    var result = '';
+    let result = '';
     const translationsByLanguage = translationObject.other_i18n;
-    // due to historical namings
     translationsByLanguage['zh_cn'] = translationObject.translations;
 
     Object.entries(translationsByLanguage).forEach(([lang, list]) => {
+        // 每个语言面板的完整结构
         result += `
             <div class="column is-6">
                 <div class="panel">
-                    <p class="panel-heading has-background-primary-light>${getTranslation('language.' + lang, lang)}</p>
+                    <p class="panel-heading has-background-primary-light">${getTranslation('language.' + lang, lang)}</p>
                     <div class="panel-block">
-                        <ul class="content ml-2">
-        `;
-        list.forEach((trans, idx) => {
-            let {raw, demo, metadata} = trans;
-            
-            result += `
-                <li class="ml-2 mt-2">
-                    <div class="has-text-weight-bold">#${idx + 1}</div>
-                    <ul class="mt-1">
-                        <li>${toLink("Raw Text", raw)} | ${toLink("Demo", demo)}</li>
-            `;
+                        <ul class="content ml-2">`;
 
-            var lastListExpanded = null;
-            recurseJson(metadata, (key, values) => {
+        list.forEach((trans, idx) => {
+            // 每个翻译项的完整结构
+            result += `
+                            <li class="ml-2 mt-2">
+                                <div class="has-text-weight-bold">#${idx + 1}</div>
+                                <ul class="mt-1">
+                                    <li>${toLink("Raw Text", trans.raw)} | ${toLink("Demo", trans.demo)}</li>`;
+
+            // 元数据处理逻辑
+            let metadataResult = '';
+            let listStack = [];
+            
+            const handleMetadata = (key, values) => {
                 const transKey = 'metadata.' + key;
-                const subtitleLocalized = getTranslation(transKey, () => capitalize(transKey.match(/\.([^.]+)$/)?.[1] || ''));  // after last dot
+                const subtitle = getTranslation(transKey, () => key.charAt(0).toUpperCase() + key.slice(1));
 
                 if (!values) {
-                    if (!lastListExpanded) {
-                        result += `<li>${subtitleLocalized}<ul>`;
-                        lastListExpanded = key;
-                    } else {
-                        result += '</ul></li>';
-                        lastListExpanded = null;
-                    }
-                } else if (values.length === 1) {
-                    result += `<li>${subtitleLocalized}: ${values[0]}</li>`;
-                } else {
-                    result += `<li>${subtitleLocalized}:
-                        <ul>
-                        ${values.map(v => `<li>${v}</li>`).join('')}
-                    </ul></li>`;
+                    // 处理 toggle 类型字段
+                    metadataResult += `<li>${subtitle}<ul>`;
+                    listStack.push('</ul></li>');
+                } else if (values.length > 0) {
+                    // 处理普通字段
+                    const closingTag = values.length > 1 ? 
+                        `<ul>${values.map(v => `<li>${v}</li>`).join('')}</ul>` : 
+                        values[0];
+                    metadataResult += `<li>${subtitle}: ${closingTag}</li>`;
                 }
-            });
-            if (lastListExpanded) console.warn('Weird list unclosed:', lastListExpanded);
-            result += '</ul></div></li>';
+            };
+
+            // 处理元数据并自动闭合未关闭的列表
+            recurseJson(trans.metadata, handleMetadata);
+            metadataResult += listStack.join('');
+
+            // 拼接元数据内容
+            result += metadataResult;
+            
+            // 闭合翻译项的标签
+            result += `
+                                </ul>
+                            </li>`;
         });
-        result += '</ul></div></p></div></div>';
+
+        // 闭合语言面板的标签
+        result += `
+                        </ul>
+                    </div>
+                </div>
+            </div>`;
     });
+
     return result;
 }
