@@ -10,7 +10,7 @@
         return result;
     })();
     let url = args.zipconfig;
-    if (!url) url = '/epx_packs/v2/dl/zipconfig.json';
+    if (!url) url = '/v2/dl/zipconfig.json';
     generateZipFromUrl(url, args, function(blob) {
         saveAs(blob, 'epx_recommended_pack-' + (function(length) {
             var result = '';
