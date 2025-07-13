@@ -27,7 +27,7 @@ METADATA = os.path.join(_HERE, 'translation_metadata.json')
 METADATA_STATIC = os.path.join(_HERE, 'static.json')
 METADATA_DYNAMIC = os.path.join(_HERE, 'dynamic_other.json')
 SPLASH_DIR = os.path.join(_HERE, 'splashes')
-WEB_ROOT = '/epx_packs/'
+#WEB_ROOT = '/epx_packs/'
 DEST = os.path.join(_HERE, 'dl/zipconfig.json')
 
 def readjson(fn):
@@ -69,8 +69,6 @@ def fixup(d):
         # Legacy compat
         if o.get('file'):
             o['fetch'] = o['file']
-        if o.get('fetch') and (not o['fetch'].startswith('https://')):
-            o['fetch'] = WEB_ROOT + o['fetch']
 
 
 def resolve_splashes(splashDir, text=False):
@@ -133,7 +131,7 @@ def main():
                 poem_dict.append({'files': files, 'weight': weight})
             else:
                 dynamic[f'poem-{lang}']['items'].append({'files': files, 'weight': weight})
-            files[f'assets/end_poem_extension/texts/end_poem/{lang}.txt'] = {'fetch': WEB_ROOT + o['raw']}
+            files[f'assets/end_poem_extension/texts/end_poem/{lang}.txt'] = {'fetch': o['raw']}
             files[f'assets/end_poem_extension/texts/end_poem/{lang}.metadata'] = {'base64': base64.b64encode(json.dumps(o).encode('utf-8')).decode('ascii')}
     
     with open(DEST, 'w', encoding='utf8') as f:
