@@ -24,13 +24,38 @@ It depends on you whether to include the original English script - For Chinese v
 ```
 Of course, you are allowed to add a copyright file to the ZIP. For example, create a `fr_fr.copyright` file with a [plaintext file object](#file-object-format).
 
-### If you have multiple versions, and you want the players to select them randomly
+### If you have multiple versions, and you want the players to select them randomly/as they want
 We're not sure if that'll happen, but if it will, you're welcomed!
 
-Create a new root object (other than `splashes`, _etc._) in [`dynamic_other.json`](https://github.com/Featurehouse/packs.epx.featurehouse.org/blob/master/v2/dynamic_other.json).
-Refer to the present items as examples, where default `weight` is 100.
-
-If you want the browser to decide which file(s) are to be chosed, set `default` to `"random"` (instead of an index number).
+Create a new object in [`translation_metadata.json`](https://github.com/Featurehouse/packs.epx.featurehouse.org/blob/master/v2/translation_metadata.json) - `other_i18n`. For example:
+```json5
+  {
+    "other_i18n": {
+      "lzh": [
+      	//...
+      ],
+      "de_de": [
+        {
+          "raw": "raw/de_de-0001.txt",
+          "demo": "demo/de_de-0001-shortname.txt",
+          "weight": 200,    // default 100
+          "metadata": {
+            // No standard of format.
+            // Put author, license/copyright or anything you want to.
+          }
+        },
+        //...
+      ]
+    },
+    "default_indexes": {
+      "lzh": "random",
+      "de_de": 0
+      // If you want to set any translation in your language as default,
+      // set its index here (start from zero). Otherwise, set "random".
+    }
+  }
+```
+Place the corresponding files to their correct position, e.g. `raw/de_de-0001.txt` (Minecraft-readable) and `demo/de_de-0001-shortname.txt` (Demo) as specified above.
 
 ## File object format
 A. Plain text:  
