@@ -1,6 +1,31 @@
 const generateZipFromUrl = async function(url, params, func) {
+  function isSkippable(obj) {
+      const SKIP_KEY = 'web';
+      // 处理 null/undefined 或无 skip_on 属性的情况
+      if (!obj || obj.skip_on === undefined) {
+          return false;
+      }
+
+      const skipOn = obj.skip_on;
+
+      // 条件 a: skip_on 是字符串且值为 'web'
+      if (typeof skipOn === 'string' && skipOn === SKIP_KEY) {
+          return true;
+      }
+
+      // 条件 b: skip_on 是数组且包含 'web'
+      if (Array.isArray(skipOn) && skipOn.includes(SKIP_KEY)) {
+          return true;
+      }
+
+      // 不满足任何条件
+      return false;
+  }
+
   // 辅助函数：向zip对象添加一个文件
   async function addFileToZip(zip, fileName, data) {
+      if (isSkippable(data)) return;
+  
       if (fileName.endsWith('/')) {
           zip.folder(fileName.slice(0, -1));
       } else {
