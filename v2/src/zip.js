@@ -6,6 +6,10 @@ const generateZipFromUrl = async function(url, params, func) {
       } else {
           if (data.fetch) {
               const response = await fetch(data.fetch);
+              if (!response.ok) {
+                  console.error(`Failed to fetch ${fileName}:`, response.status, response.statusText);
+                  return;
+              }
               const blob = await response.blob();
               zip.file(fileName, blob);
           } else if (data.base64) {
