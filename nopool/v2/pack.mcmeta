@@ -5,7 +5,7 @@
       "", {"text": "Alternative End Poem Translations\n", "color": "yellow", "bold":true},"Requires End Poem Extension mod"
     ],
     "min_format": 8,
-    "max_format": 99999999
+    "max_format": 99999999,
     "supported_formats": [8, 9999999]
   }
 }
