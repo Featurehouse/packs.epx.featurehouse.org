@@ -6,6 +6,6 @@
     ],
     "min_format": 8,
     "max_format": 99999999,
-    "supported_formats": [8, 9999999]
+    "supported_formats": [8, 99999999]
   }
 }
