@@ -3,7 +3,7 @@
     "pack_format": 8,
     "description": [
       "", {"text": "Alternative End Poem Translations\n", "color": "yellow", "bold":true},"Requires End Poem Extension mod"
-    ],
+    ]
   },
   "remoteresourcepack:force_compatible": true
 }
