@@ -4,7 +4,6 @@
     "description": [
       "", {"text": "Alternative End Poem Translations\n", "color": "yellow", "bold":true},"Requires End Poem Extension mod"
     ],
-    "supported_formats": [8, 64]
   },
   "remoteresourcepack:force_compatible": true
 }
