@@ -1,0 +1,2 @@
+# We're going to migrate from packs.epx.featurehouse.org to packs.epx.mc.7c7.icu
+https://packs.epx.featurehouse.org/* https://packs.epx.mc.7c7.icu/:splat 301!
