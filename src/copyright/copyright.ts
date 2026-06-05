@@ -96,9 +96,9 @@ function capitalizeSnake(str: string): string {
 }
 
 // 安全的 URL 验证（只允许 https 协议）
-function safeUrl(urlString: string, baseUrl: string): string | null {
+function safeUrl(urlString: string, baseUrl: string | null): string | null {
     try {
-        const url = new URL(urlString, baseUrl);
+        const url = new URL(urlString, baseUrl ?? undefined);
         if (url.protocol !== 'https:') return null;
         return url.href;
     } catch {
@@ -110,7 +110,6 @@ function safeUrl(urlString: string, baseUrl: string): string | null {
 function buildMetadataElement(
     metadata: Record<string, any>,
     tUI: (key: string, fallback?: string) => string,
-    baseUrl: string,
     prefix = ''
 ): HTMLElement {
     const container = document.createElement('ul');
@@ -135,7 +134,7 @@ function buildMetadataElement(
                 for (const item of value) {
                     const itemLi = document.createElement('li');
                     if (typeof item === 'object' && item !== null) {
-                        const nested = buildMetadataElement(item, tUI, baseUrl, '');
+                        const nested = buildMetadataElement(item, tUI, '');
                         itemLi.appendChild(nested);
                     } else {
                         const valSpan = document.createElement('span');
@@ -149,7 +148,7 @@ function buildMetadataElement(
             } else {
                 const nestedDiv = document.createElement('div');
                 nestedDiv.className = 'nested-metadata';
-                nestedDiv.appendChild(buildMetadataElement(value, tUI, baseUrl, fullKey));
+                nestedDiv.appendChild(buildMetadataElement(value, tUI, fullKey));
                 li.appendChild(nestedDiv);
             }
         } else {
@@ -161,7 +160,8 @@ function buildMetadataElement(
             const valSpan = document.createElement('span');
             valSpan.className = 'metadata-value';
             const strValue = value === null || value === undefined ? '' : String(value);
-            const validatedUrl = safeUrl(strValue, baseUrl);
+            // We mustn't use baseUrl here, metadata links must be absolute
+            const validatedUrl = safeUrl(strValue, null);
             if (validatedUrl) {
                 const link = document.createElement('a');
                 link.href = validatedUrl;
