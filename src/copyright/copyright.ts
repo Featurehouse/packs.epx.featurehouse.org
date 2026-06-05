@@ -350,7 +350,7 @@ function renderUI(
         linksContainer.innerHTML = '';
         const links = [
             { url: 'https://modrinth.com/mod/end-poem-extension', text: tUI('ui.modrinth'), badge: tUI('ui.badge_mod') },
-            { url: 'https://github.com/Featurehouse/epx_packs', text: tUI('ui.source_repo'), badge: tUI('ui.contrib') },
+            { url: 'https://github.com/Featurehouse/packs.epx.featurehouse.org', text: tUI('ui.source_repo'), badge: tUI('ui.contrib') },
             { url: 'https://www.mcmod.cn/class/10478.html', text: 'MCMOD', badge: tUI('ui.badge_chinese') }
         ];
         for (const link of links) {
