@@ -1,6 +1,6 @@
 This is a repository for [End Poem Extension](https://modrinth.com/mod/end-poem-extension) Recommended Pack.
 
-API: `https://packs.epx.featurehouse.org/v2/dl`
+API: `https://epx-packs.mods.hixland.com/v2/dl`
 
 ## Contribute to Poem translation
 

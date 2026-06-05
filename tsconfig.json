@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "strict": true,
+    "target": "es2020",
+    "module": "esnext",
+    "skipLibCheck": true,
+    "types": ["vite/client"],
+    "rootDir": "src",
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
