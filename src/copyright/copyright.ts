@@ -24,6 +24,7 @@ const UI_I18N: Record<UILang, Record<string, string>> = {
         'ui.source_repo': 'EPX Recommended Pack Repository',
         'ui.mcmod': 'MCMOD',
         'ui.contrib': 'Contribute!',
+        'ui.switch_lang': 'UI Language',
     },
     'zh-CN': {
         'lang.en_us': '美式英语',
@@ -43,6 +44,7 @@ const UI_I18N: Record<UILang, Record<string, string>> = {
         'ui.source_repo': 'EPX 推荐包仓库',
         'ui.mcmod': 'MC百科',
         'ui.contrib': '参与贡献',
+        'ui.switch_lang': '界面语言',
     },
     'zh-TW': {
         'lang.en_us': '美式英語',
@@ -62,6 +64,7 @@ const UI_I18N: Record<UILang, Record<string, string>> = {
         'ui.source_repo': 'EPX 推薦包倉庫',
         'ui.mcmod': 'MC百科',
         'ui.contrib': '參與貢獻',
+        'ui.switch_lang': '界面語言',
     }
 };
 
@@ -74,17 +77,13 @@ function capitalizeSnake(str: string): string {
         .join(' ');
 }
 
-// 安全的 URL 验证（只允许 http/https 或相对路径，禁止 javascript: 等）
+// 安全的 URL 验证（只允许 https 协议）
 function safeUrl(urlString: string, baseUrl: string): string | null {
     try {
         const url = new URL(urlString, baseUrl);
-        // 只允许 https: 协议
-        if (url.protocol !== 'https:') {
-            return null;
-        }
+        if (url.protocol !== 'https:') return null;
         return url.href;
     } catch {
-        // 无效 URL 则返回 null
         return null;
     }
 }
@@ -144,7 +143,6 @@ function buildMetadataElement(
             const valSpan = document.createElement('span');
             valSpan.className = 'metadata-value';
             const strValue = value === null || value === undefined ? '' : String(value);
-            // 检查是否为有效 URL
             const validatedUrl = safeUrl(strValue, baseUrl);
             if (validatedUrl) {
                 const link = document.createElement('a');
@@ -248,11 +246,43 @@ function buildLangPanel(
     return card;
 }
 
+// 构建 UI 语言切换按钮组
+function buildUILangSwitcher(currentLang: UILang, tUI: (key: string, fallback?: string) => string): HTMLElement {
+    const container = document.createElement('div');
+    container.className = 'ui-lang-switcher';
+    container.style.display = 'flex';
+    container.style.gap = '0.5rem';
+    container.style.justifyContent = 'flex-end';
+    container.style.marginBottom = '1rem';
+
+    const label = document.createElement('span');
+    label.textContent = tUI('ui.switch_lang') + ':';
+    label.style.fontSize = '0.85rem';
+    label.style.opacity = '0.8';
+    container.appendChild(label);
+
+    for (const lang of UI_SUPPORTED_LANGS) {
+        const btn = document.createElement('button');
+        btn.textContent = lang;
+        btn.classList.add('lang-btn');
+        if (lang === currentLang) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+            const url = new URL(window.location.href);
+            url.searchParams.set('uiLang', lang);
+            url.hash = window.location.hash; // 保留 hash
+            window.history.pushState({}, '', url.toString());
+            init(); // 重新初始化，使用新的 UI 语言
+        });
+        container.appendChild(btn);
+    }
+    return container;
+}
+
 // 渲染整个页面（纯 DOM 操作）
 function renderUI(
     metadata: TranslationMetadata,
     tUI: (key: string, fallback?: string) => string,
-    baseUrl: string
+    baseUrl: string,
 ): void {
     const container = document.getElementById('credits-grid');
     const langBar = document.getElementById('lang-bar');
@@ -260,13 +290,13 @@ function renderUI(
 
     // 收集所有可用翻译语言（板块）
     const translationLangs = new Set<string>();
-    translationLangs.add('zh_cn');   // translations 字段对应简体中文
+    translationLangs.add('zh_cn');
     for (const lang of Object.keys(metadata.other_i18n || {})) {
         translationLangs.add(lang);
     }
     const langList = Array.from(translationLangs).sort();
 
-    // 清空并重新构建语言切换按钮
+    // 清空并重新构建翻译板块的语言切换按钮
     langBar.innerHTML = '';
     for (const lang of langList) {
         const btn = document.createElement('button');
@@ -329,8 +359,13 @@ function renderUI(
     }
 }
 
-// 选择界面语言（基于浏览器偏好）
+// 选择界面语言：优先 URL 参数，其次浏览器语言
 function selectUILanguage(): UILang {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramLang = urlParams.get('uiLang');
+    if (paramLang && UI_SUPPORTED_LANGS.includes(paramLang as UILang)) {
+        return paramLang as UILang;
+    }
     const browserLangs = navigator.languages || [navigator.language];
     for (const lang of browserLangs) {
         if (UI_SUPPORTED_LANGS.includes(lang as UILang)) return lang as UILang;
@@ -356,6 +391,24 @@ async function init(): Promise<void> {
         };
 
         const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+
+        // 注入 UI 语言切换器（如果不存在则添加）
+        let uiSwitcherContainer = document.getElementById('ui-lang-switcher-container');
+        if (!uiSwitcherContainer) {
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                uiSwitcherContainer = document.createElement('div');
+                uiSwitcherContainer.id = 'ui-lang-switcher-container';
+                uiSwitcherContainer.style.display = 'flex';
+                uiSwitcherContainer.style.justifyContent = 'flex-end';
+                hero.appendChild(uiSwitcherContainer);
+            }
+        }
+        if (uiSwitcherContainer) {
+            uiSwitcherContainer.innerHTML = '';
+            uiSwitcherContainer.appendChild(buildUILangSwitcher(uiLang, tUI));
+        }
+
         renderUI(metadata, tUI, baseUrl);
         document.documentElement.lang = uiLang.toLowerCase();
     } catch (err) {
@@ -424,3 +477,6 @@ window.addEventListener('hashchange', () => {
         if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 });
+
+// 监听 popstate 事件（浏览器前进后退）重新初始化 UI 语言
+window.addEventListener('popstate', init);
