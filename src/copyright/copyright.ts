@@ -74,113 +74,181 @@ function capitalizeSnake(str: string): string {
         .join(' ');
 }
 
-// 简单转义 HTML
-function escapeHtml(str: string): string {
-    return str.replace(/[&<>]/g, (m) => {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
+// 安全的 URL 验证（只允许 http/https 或相对路径，禁止 javascript: 等）
+function safeUrl(urlString: string, baseUrl: string): string | null {
+    try {
+        const url = new URL(urlString, baseUrl);
+        // 只允许 https: 协议
+        if (url.protocol !== 'https:') {
+            return null;
+        }
+        return url.href;
+    } catch {
+        // 无效 URL 则返回 null
+        return null;
+    }
 }
 
-// 递归渲染 metadata 对象
-function renderMetadata(
+// 递归构建 metadata 的 DOM 元素（完全安全，无字符串拼接）
+function buildMetadataElement(
     metadata: Record<string, any>,
     tUI: (key: string, fallback?: string) => string,
+    baseUrl: string,
     prefix = ''
-): string {
-    let html = '<ul class="metadata-list">';
+): HTMLElement {
+    const container = document.createElement('ul');
+    container.className = 'metadata-list';
+
     for (const [key, value] of Object.entries(metadata)) {
         const fullKey = prefix ? `${prefix}.${key}` : key;
         const transKey = `metadata.${fullKey}`;
         const label = tUI(transKey, capitalizeSnake(key));
 
+        const li = document.createElement('li');
+
         if (value && typeof value === 'object') {
+            const keySpan = document.createElement('span');
+            keySpan.className = 'metadata-key';
+            keySpan.textContent = label + ':';
+            li.appendChild(keySpan);
+
             if (Array.isArray(value)) {
-                html += `<li><span class="metadata-key">${label}:</span><ul class="nested-list">`;
+                const ul = document.createElement('ul');
+                ul.className = 'nested-list';
                 for (const item of value) {
+                    const itemLi = document.createElement('li');
                     if (typeof item === 'object' && item !== null) {
-                        html += `<li>${renderMetadata(item, tUI, '')}</li>`;
+                        const nested = buildMetadataElement(item, tUI, baseUrl, '');
+                        itemLi.appendChild(nested);
                     } else {
-                        html += `<li class="metadata-value">${escapeHtml(String(item))}</li>`;
+                        const valSpan = document.createElement('span');
+                        valSpan.className = 'metadata-value';
+                        valSpan.textContent = String(item);
+                        itemLi.appendChild(valSpan);
                     }
+                    ul.appendChild(itemLi);
                 }
-                html += `</ul></li>`;
+                li.appendChild(ul);
             } else {
-                html += `<li><span class="metadata-key">${label}</span><div class="nested-metadata">${renderMetadata(value, tUI, fullKey)}</div></li>`;
+                const nestedDiv = document.createElement('div');
+                nestedDiv.className = 'nested-metadata';
+                nestedDiv.appendChild(buildMetadataElement(value, tUI, baseUrl, fullKey));
+                li.appendChild(nestedDiv);
             }
         } else {
-            let strValue = value === null || value === undefined ? '' : String(value);
-            let displayValue = escapeHtml(strValue);
-            if (strValue.match(/^https?:\/\//i)) {
-                displayValue = `<a href="${escapeHtml(strValue)}" target="_blank" rel="noopener noreferrer">${escapeHtml(strValue)}</a>`;
+            const keySpan = document.createElement('span');
+            keySpan.className = 'metadata-key';
+            keySpan.textContent = label + ':';
+            li.appendChild(keySpan);
+
+            const valSpan = document.createElement('span');
+            valSpan.className = 'metadata-value';
+            const strValue = value === null || value === undefined ? '' : String(value);
+            // 检查是否为有效 URL
+            const validatedUrl = safeUrl(strValue, baseUrl);
+            if (validatedUrl) {
+                const link = document.createElement('a');
+                link.href = validatedUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.textContent = strValue;
+                valSpan.appendChild(link);
+            } else {
+                valSpan.textContent = strValue;
             }
-            html += `<li><span class="metadata-key">${label}:</span> <span class="metadata-value">${displayValue}</span></li>`;
+            li.appendChild(valSpan);
         }
+        container.appendChild(li);
     }
-    html += '</ul>';
-    return html;
+    return container;
 }
 
-// 选择界面语言（基于浏览器偏好）
-function selectUILanguage(): UILang {
-    const browserLangs = navigator.languages || [navigator.language];
-    for (const lang of browserLangs) {
-        // 精确匹配
-        if (UI_SUPPORTED_LANGS.includes(lang as UILang)) return lang as UILang;
-        // 降级：zh -> zh-CN, en -> en-US
-        const base = lang.split('-')[0];
-        if (base === 'zh') return 'zh-CN';
-        if (base === 'en') return 'en-US';
-    }
-    return 'en-US';
-}
-
-// 构建单个语言板块的 HTML
+// 构建单个语言板块的 DOM 元素
 function buildLangPanel(
-    langCode: string,           // 例如 'zh_cn', 'en_us', 'lzh'
+    langCode: string,
     translations: any[],
     tUI: (key: string, fallback?: string) => string,
     baseUrl: string
-): string {
+): HTMLElement {
+    const card = document.createElement('div');
+    card.className = 'lang-card';
+    card.setAttribute('data-lang', langCode);
+
+    const header = document.createElement('div');
+    header.className = 'card-header';
+    const title = document.createElement('h2');
     const displayName = tUI(`lang.${langCode}`, langCode);
-    let itemsHtml = '';
+    title.appendChild(document.createTextNode(displayName));
+    const badge = document.createElement('span');
+    badge.className = 'lang-badge';
+    badge.textContent = langCode;
+    title.appendChild(badge);
+    header.appendChild(title);
+    card.appendChild(header);
+
+    const listContainer = document.createElement('div');
+    listContainer.className = 'translation-list';
+
     for (let idx = 0; idx < translations.length; idx++) {
         const item = translations[idx];
-        const rawUrl = new URL(item.raw, baseUrl).href;
-        const demoUrl = new URL(item.demo, baseUrl).href;
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'translation-item';
 
-        let metadataHtml = '';
-        if (item.metadata && Object.keys(item.metadata).length) {
-            metadataHtml = `<div class="metadata-block">${renderMetadata(item.metadata, tUI)}</div>`;
+        const indexSpan = document.createElement('div');
+        indexSpan.className = 'item-index';
+        indexSpan.textContent = `#${idx + 1}`;
+        itemDiv.appendChild(indexSpan);
+
+        const linkGroup = document.createElement('div');
+        linkGroup.className = 'link-group';
+
+        const rawUrl = safeUrl(item.raw, baseUrl);
+        if (rawUrl) {
+            const rawLink = document.createElement('a');
+            rawLink.href = rawUrl;
+            rawLink.target = '_blank';
+            rawLink.rel = 'noopener noreferrer';
+            rawLink.textContent = tUI('ui.raw');
+            linkGroup.appendChild(rawLink);
+        } else {
+            const rawSpan = document.createElement('span');
+            rawSpan.textContent = tUI('ui.raw') + ' (无效链接)';
+            rawSpan.style.opacity = '0.6';
+            linkGroup.appendChild(rawSpan);
         }
 
-        itemsHtml += `
-            <div class="translation-item">
-                <div class="item-index">#${idx + 1}</div>
-                <div class="link-group">
-                    <a href="${escapeHtml(rawUrl)}" target="_blank" rel="noopener">${tUI('ui.raw')}</a>
-                    <a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener">${tUI('ui.demo')}</a>
-                </div>
-                ${metadataHtml}
-            </div>
-        `;
+        const demoUrl = safeUrl(item.demo, baseUrl);
+        if (demoUrl) {
+            const demoLink = document.createElement('a');
+            demoLink.href = demoUrl;
+            demoLink.target = '_blank';
+            demoLink.rel = 'noopener noreferrer';
+            demoLink.textContent = tUI('ui.demo');
+            linkGroup.appendChild(demoLink);
+        } else {
+            const demoSpan = document.createElement('span');
+            demoSpan.textContent = tUI('ui.demo') + ' (无效链接)';
+            demoSpan.style.opacity = '0.6';
+            linkGroup.appendChild(demoSpan);
+        }
+
+        itemDiv.appendChild(linkGroup);
+
+        if (item.metadata && Object.keys(item.metadata).length) {
+            const metadataBlock = document.createElement('div');
+            metadataBlock.className = 'metadata-block';
+            metadataBlock.appendChild(buildMetadataElement(item.metadata, tUI, baseUrl));
+            itemDiv.appendChild(metadataBlock);
+        }
+
+        listContainer.appendChild(itemDiv);
     }
 
-    return `
-        <div class="lang-card" data-lang="${langCode}">
-            <div class="card-header">
-                <h2>${escapeHtml(displayName)} <span class="lang-badge">${langCode}</span></h2>
-            </div>
-            <div class="translation-list">
-                ${itemsHtml}
-            </div>
-        </div>
-    `;
+    card.appendChild(listContainer);
+    return card;
 }
 
-// 渲染整个页面
+// 渲染整个页面（纯 DOM 操作）
 function renderUI(
     metadata: TranslationMetadata,
     tUI: (key: string, fallback?: string) => string,
@@ -188,7 +256,7 @@ function renderUI(
 ): void {
     const container = document.getElementById('credits-grid');
     const langBar = document.getElementById('lang-bar');
-    if (!container) return;
+    if (!container || !langBar) return;
 
     // 收集所有可用翻译语言（板块）
     const translationLangs = new Set<string>();
@@ -198,27 +266,24 @@ function renderUI(
     }
     const langList = Array.from(translationLangs).sort();
 
-    // 生成语言切换按钮（按界面文本显示）
-    if (langBar) {
-        langBar.innerHTML = '';
-        for (const lang of langList) {
-            const btn = document.createElement('button');
-            btn.textContent = tUI(`lang.${lang}`, lang);
-            btn.classList.add('lang-btn');
-            // 高亮当前显示的板块？不，切换的是“可见性”？原设计未做筛选，此处保留按钮仅用于跳转锚点
-            btn.addEventListener('click', () => {
-                const targetCard = document.querySelector(`.lang-card[data-lang="${lang}"]`);
-                if (targetCard) {
-                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-                window.location.hash = lang;
-            });
-            langBar.appendChild(btn);
-        }
+    // 清空并重新构建语言切换按钮
+    langBar.innerHTML = '';
+    for (const lang of langList) {
+        const btn = document.createElement('button');
+        btn.textContent = tUI(`lang.${lang}`, lang);
+        btn.classList.add('lang-btn');
+        btn.addEventListener('click', () => {
+            const targetCard = document.querySelector(`.lang-card[data-lang="${lang}"]`);
+            if (targetCard) {
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            window.location.hash = lang;
+        });
+        langBar.appendChild(btn);
     }
 
-    // 渲染所有板块卡片
-    let cardsHtml = '';
+    // 清空并重新构建卡片网格
+    container.innerHTML = '';
     for (const lang of langList) {
         let items: any[] = [];
         if (lang === 'zh_cn') {
@@ -227,25 +292,31 @@ function renderUI(
             items = metadata.other_i18n?.[lang] || [];
         }
         if (items.length === 0) continue;
-        cardsHtml += buildLangPanel(lang, items, tUI, baseUrl);
+        const card = buildLangPanel(lang, items, tUI, baseUrl);
+        container.appendChild(card);
     }
-    container.innerHTML = cardsHtml;
 
-    // 底部链接区
+    // 底部链接区（安全构建）
     const linksContainer = document.getElementById('links-section');
     if (linksContainer) {
-        linksContainer.innerHTML = `
-            <a href="https://modrinth.com/mod/end-poem-extension" target="_blank" rel="noopener">
-                ${tUI('ui.modrinth')} <span class="tag-badge">Mod</span>
-            </a>
-            <a href="https://github.com/Featurehouse/epx_packs" target="_blank" rel="noopener">
-                ${tUI('ui.source_repo')} 
-                <span class="tag-badge">${tUI('ui.contrib')}</span>
-            </a>
-            <a href="https://www.mcmod.cn/class/10478.html" target="_blank" rel="noopener">
-                MCMOD <span class="tag-badge">中文</span>
-            </a>
-        `;
+        linksContainer.innerHTML = '';
+        const links = [
+            { url: 'https://modrinth.com/mod/end-poem-extension', text: tUI('ui.modrinth'), badge: 'Mod' },
+            { url: 'https://github.com/Featurehouse/epx_packs', text: tUI('ui.source_repo'), badge: tUI('ui.contrib') },
+            { url: 'https://www.mcmod.cn/class/10478.html', text: 'MCMOD', badge: '中文' }
+        ];
+        for (const link of links) {
+            const a = document.createElement('a');
+            a.href = link.url;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            a.textContent = link.text;
+            const badgeSpan = document.createElement('span');
+            badgeSpan.className = 'tag-badge';
+            badgeSpan.textContent = link.badge;
+            a.appendChild(badgeSpan);
+            linksContainer.appendChild(a);
+        }
     }
 
     // 处理 hash 滚动
@@ -258,35 +329,47 @@ function renderUI(
     }
 }
 
+// 选择界面语言（基于浏览器偏好）
+function selectUILanguage(): UILang {
+    const browserLangs = navigator.languages || [navigator.language];
+    for (const lang of browserLangs) {
+        if (UI_SUPPORTED_LANGS.includes(lang as UILang)) return lang as UILang;
+        const base = lang.split('-')[0];
+        if (base === 'zh') return 'zh-CN';
+        if (base === 'en') return 'en-US';
+    }
+    return 'en-US';
+}
+
 // 主入口
 async function init(): Promise<void> {
     try {
-        // 1. 获取翻译元数据
         const response = await fetch('./translation_metadata.json');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const jsonData = await response.json();
         const metadata = TranslationMetadataSchema.parse(jsonData);
 
-        // 2. 选择界面语言
         const uiLang = selectUILanguage();
         const uiPack = UI_I18N[uiLang];
         const tUI = (key: string, fallback?: string): string => {
             return uiPack[key] ?? UI_I18N['en-US'][key] ?? fallback ?? key;
         };
 
-        // 3. 基础 URL（用于拼接相对路径）
         const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
-
-        // 4. 渲染
         renderUI(metadata, tUI, baseUrl);
-
-        // 设置文档语言
         document.documentElement.lang = uiLang.toLowerCase();
     } catch (err) {
         console.error('Failed to load credits:', err);
         const container = document.getElementById('credits-grid');
         if (container) {
-            container.innerHTML = `<div class="error-message" style="color:#b91c1c;padding:2rem;text-align:center;">⚠️ 加载鸣谢数据失败，请检查网络或刷新重试。</div>`;
+            container.innerHTML = '';
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.style.color = '#b91c1c';
+            errorDiv.style.padding = '2rem';
+            errorDiv.style.textAlign = 'center';
+            errorDiv.textContent = '⚠️ 加载鸣谢数据失败，请检查网络或刷新重试。';
+            container.appendChild(errorDiv);
         }
     }
 }
@@ -294,17 +377,22 @@ async function init(): Promise<void> {
 // 等待 DOM 并注入必要容器
 document.addEventListener('DOMContentLoaded', () => {
     if (!document.getElementById('credits-grid')) {
-        const containerDiv = document.querySelector('.credits-container');
-        if (!containerDiv) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'credits-container';
-            document.body.prepend(wrapper);
+        let container = document.querySelector('.credits-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'credits-container';
+            document.body.prepend(container);
         }
-        const container = document.querySelector('.credits-container')!;
         if (!document.querySelector('.hero')) {
             const hero = document.createElement('div');
             hero.className = 'hero';
-            hero.innerHTML = `<h1>EPX Recommended Pack — 翻译鸣谢</h1><div class="sub">社区翻译贡献者及许可信息</div>`;
+            const title = document.createElement('h1');
+            title.textContent = 'EPX Recommended Pack — 翻译鸣谢';
+            const sub = document.createElement('div');
+            sub.className = 'sub';
+            sub.textContent = '社区翻译贡献者及许可信息';
+            hero.appendChild(title);
+            hero.appendChild(sub);
             container.prepend(hero);
         }
         if (!document.getElementById('lang-bar')) {
@@ -329,7 +417,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return init();
 });
 
-// 监听 hash 变化，滚动到对应卡片
 window.addEventListener('hashchange', () => {
     const hash = window.location.hash.slice(1);
     if (hash) {
