@@ -22,9 +22,10 @@ import {TranslationMetadata, TranslationMetadataSchema} from "../schema/translat
 import {loadSplashes, Splashes} from "../schema/splashes.js";
 import {Buffer} from "buffer";
 
-const publicDir = (p: string) => path.join(__dirname, 'public', p)
-const thisDir = (p: string) => path.join(__dirname, p)
-const outputDir = (p: string) => path.join(__dirname, 'dist', p)
+const rootDir = path.join(__dirname, '..', '..')
+const publicDir = (p: string) => path.join(rootDir, 'public', p)
+const thisDir = (p: string) => path.join(rootDir, p)
+const outputDir = (p: string) => path.join(rootDir, 'dist', p)
 
 const paths = {
     metadata: publicDir('v2/translation_metadata.json'),
@@ -44,7 +45,9 @@ function readJson<T>(path: string, zodType: z.ZodType<T>): T {
 
 function dumpString(relativePath: string, content: string | Uint8Array) {
     const filePath = outputDir(relativePath)
-    fs.mkdirSync(path.dirname(filePath))
+    fs.mkdirSync(path.dirname(filePath), {
+        recursive: true,
+    })
     fs.writeFileSync(filePath, content)
 }
 
@@ -124,8 +127,7 @@ export function generate() {
     dumpJson('v2/dl/zipconfig.json', out)
 }
 
-function resolveSplashes(relativeSplashDir: string, isText: boolean = false): Splashes {
-    const splashDir = thisDir(relativeSplashDir)
+function resolveSplashes(splashDir: string, isText: boolean = false): Splashes {
     const expectedSuffix = isText ? '.txt' : '.json'
     const files = fs.readdirSync(splashDir)
         .filter(s => s.endsWith(expectedSuffix))
@@ -142,9 +144,9 @@ function resolveSplashes(relativeSplashDir: string, isText: boolean = false): Sp
 }
 
 export function dumpTimestamp() {
-    const dateString = new Date().toLocaleString('zh_CN', {
+    const dateString = new Date().toLocaleString('zh-CN', {
         timeZone: 'Asia/Shanghai',
-        timeZoneName: 'shortOffset'
+        timeZoneName: 'shortOffset',
     })
     dumpString('timetstamp.txt', '# Build Time\n' + dateString)
 }

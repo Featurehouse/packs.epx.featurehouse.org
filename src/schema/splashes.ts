@@ -33,7 +33,7 @@ function fromText(fileContent: string): Splashes {
 export function loadSplashes(isText: boolean, fileContents: Iterable<string>): Splashes {
     const ret = blankSplashes()
     for (const content of fileContents) {
-        const splashes: Splashes = isText ? fromText(content) : SplashesSchema.parse(JSON.stringify(content))
+        const splashes: Splashes = isText ? fromText(content) : SplashesSchema.parse(JSON.parse(content))
         ret.add.push(...splashes.add)
         ret.remove.push(...splashes.remove)
     }

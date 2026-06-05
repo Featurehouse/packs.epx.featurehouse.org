@@ -9,7 +9,9 @@
     "typescript": "^6.0.3",
     "vite": "^8.0.16"
   },
-  "scripts": {},
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.json --noEmit && touch ./dist/.keep"
+  },
   "dependencies": {
     "@types/file-saver": "^2.0.7",
     "buffer": "^6.0.3",

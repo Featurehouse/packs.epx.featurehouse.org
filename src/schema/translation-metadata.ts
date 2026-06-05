@@ -16,8 +16,8 @@ const TranslationItem = z.object({
     metadata: ItemMetadataBase.extend({
         'see_also': z.union([
             ItemMetadataBase,
-            z.array(ItemMetadataBase)
-        ])
+            z.array(ItemMetadataBase),
+        ]).optional()
     }),
 })
 

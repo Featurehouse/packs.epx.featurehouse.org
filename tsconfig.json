@@ -4,11 +4,9 @@
     "strict": true,
     "target": "es2020",
     "module": "esnext",
-    "declaration": false,
     "skipLibCheck": true,
     "types": ["vite/client"],
     "rootDir": "src",
-    "emitDeclarationOnly": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
