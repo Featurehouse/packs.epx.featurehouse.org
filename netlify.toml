@@ -4,3 +4,15 @@ publish = "dist"
 
 [build.environment]
 NODE_VERSION = '24'
+
+[[redirects]]
+from = "https://packs.epx.featurehouse.org/*"
+to = "https://epx-packs.mods.hixland.com/:splat"
+status = 301
+force = true
+
+[[redirects]]
+from = "https://packs.epx.mc.7c7.icu/*"
+to = "https://epx-packs.mods.hixland.com/:splat"
+status = 301
+force = true
