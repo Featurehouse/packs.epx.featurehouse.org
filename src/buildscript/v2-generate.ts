@@ -62,18 +62,7 @@ export function generate() {
     i18nPoem[zhCnKey] = zhCnPoem
 
     const staticFiles = readJson(paths.static, StaticFilesSchema)
-    for (const file of Object.values(staticFiles)) {
-        relativizeUri(file, '/')
-    }
-
     const dynamicFiles = readJson(paths.dynamicOther, DynamicFilesSchema)
-    for (const paramValue of Object.values(dynamicFiles)) {
-        for (const item of paramValue.items) {
-            for (const file of Object.values(item.files)) {
-                relativizeUri(file, '/')
-            }
-        }
-    }
 
     // main splashes
     dumpJson('v2/splashes.gen', resolveSplashes(paths.splashesDir))
@@ -116,6 +105,18 @@ export function generate() {
             }
             files[`assets/end_poem_extension/texts/end_poem/${langCode}.metadata`] = {
                 base64: Buffer.from(JSON.stringify(translationItem), 'base64').toString('ascii'),
+            }
+        }
+    }
+
+    for (const file of Object.values(staticFiles)) {
+        relativizeUri(file, '/')
+    }
+
+    for (const paramValue of Object.values(dynamicFiles)) {
+        for (const item of paramValue.items) {
+            for (const file of Object.values(item.files)) {
+                relativizeUri(file, '/')
             }
         }
     }
