@@ -86,6 +86,12 @@ const UI_I18N: Record<UILang, Record<string, string>> = {
     }
 };
 
+const UI_LANGUAGE_NAMES: Record<UILang, string> = {
+    'en-US': 'English',
+    'zh-CN': '简体中文',
+    'zh-TW': '繁體中文',
+}
+
 // 辅助：将 snake_case 转为首字母大写（用于回退显示）
 function capitalizeSnake(str: string): string {
     if (!str) return '';
@@ -281,7 +287,9 @@ function buildUILangSwitcher(currentLang: UILang, tUI: (key: string, fallback?: 
 
     for (const lang of UI_SUPPORTED_LANGS) {
         const btn = document.createElement('button');
-        btn.textContent = lang;
+        // btn.textContent = lang;
+        btn.textContent = UI_LANGUAGE_NAMES[lang];
+        btn.title = lang;
         btn.classList.add('lang-btn');
         if (lang === currentLang) btn.classList.add('active');
         btn.addEventListener('click', () => {
