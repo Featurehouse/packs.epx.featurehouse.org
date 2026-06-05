@@ -104,7 +104,7 @@ export function generate() {
                 fetch: translationItem.raw,
             }
             files[`assets/end_poem_extension/texts/end_poem/${langCode}.metadata`] = {
-                base64: Buffer.from(JSON.stringify(translationItem), 'base64').toString('ascii'),
+                base64: Buffer.from(JSON.stringify(translationItem), 'utf-8').toString('base64'),
             }
         }
     }
