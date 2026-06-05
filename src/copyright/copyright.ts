@@ -7,16 +7,26 @@ type UILang = typeof UI_SUPPORTED_LANGS[number];
 
 const UI_I18N: Record<UILang, Record<string, string>> = {
     'en-US': {
+        // 界面通用
+        'ui.page_title': 'EPX Recommended Pack — Credits',
+        'ui.page_subtitle': 'Community translation contributors and license information',
+        'ui.invalid_link': 'Invalid URL',
+        'ui.error_load': '⚠️ Failed to load credits data. Please check your network and refresh.',
+        'ui.badge_mod': 'Mod',
+        'ui.badge_chinese': '中文',
+        // 翻译板块语言名称
         'lang.en_us': 'English (US)',
         'lang.zh_cn': 'Chinese (Simplified)',
         'lang.lzh': 'Literary Chinese',
         'lang.zh_hk': 'Chinese (Traditional, HK)',
         'lang.zh_tw': 'Chinese (Traditional, TW)',
+        // 元数据字段
         'metadata.author': 'Author',
         'metadata.link': 'Link',
         'metadata.homepage': 'Homepage',
         'metadata.license': 'License',
         'metadata.see_also': 'See also',
+        // 界面按钮/链接
         'ui.raw': 'Raw Text',
         'ui.demo': 'Demo',
         'ui.links': '🔗 Links',
@@ -27,6 +37,12 @@ const UI_I18N: Record<UILang, Record<string, string>> = {
         'ui.switch_lang': 'UI Language',
     },
     'zh-CN': {
+        'ui.page_title': 'EPX Recommended Pack — 翻译鸣谢',
+        'ui.page_subtitle': '社区翻译贡献者及许可信息',
+        'ui.invalid_link': '无效链接',
+        'ui.error_load': '⚠️ 加载鸣谢数据失败，请检查网络并刷新重试。',
+        'ui.badge_mod': 'Mod',
+        'ui.badge_chinese': '中文',
         'lang.en_us': '美式英语',
         'lang.zh_cn': '简体中文',
         'lang.lzh': '文言',
@@ -47,6 +63,12 @@ const UI_I18N: Record<UILang, Record<string, string>> = {
         'ui.switch_lang': '界面语言',
     },
     'zh-TW': {
+        'ui.page_title': 'EPX Recommended Pack — 翻譯鳴謝',
+        'ui.page_subtitle': '社群翻譯貢獻者及許可資訊',
+        'ui.invalid_link': '無效連結',
+        'ui.error_load': '⚠️ 載入鳴謝資料失敗，請檢查網路並重新整理。',
+        'ui.badge_mod': 'Mod',
+        'ui.badge_chinese': '中文',
         'lang.en_us': '美式英語',
         'lang.zh_cn': '簡體中文',
         'lang.lzh': '文言',
@@ -210,7 +232,7 @@ function buildLangPanel(
             linkGroup.appendChild(rawLink);
         } else {
             const rawSpan = document.createElement('span');
-            rawSpan.textContent = tUI('ui.raw') + ' (无效链接)';
+            rawSpan.textContent = `${tUI('ui.raw')} (${tUI('ui.invalid_link')})`;
             rawSpan.style.opacity = '0.6';
             linkGroup.appendChild(rawSpan);
         }
@@ -225,7 +247,7 @@ function buildLangPanel(
             linkGroup.appendChild(demoLink);
         } else {
             const demoSpan = document.createElement('span');
-            demoSpan.textContent = tUI('ui.demo') + ' (无效链接)';
+            demoSpan.textContent = `${tUI('ui.demo')} (${tUI('ui.invalid_link')})`;
             demoSpan.style.opacity = '0.6';
             linkGroup.appendChild(demoSpan);
         }
@@ -269,9 +291,9 @@ function buildUILangSwitcher(currentLang: UILang, tUI: (key: string, fallback?: 
         btn.addEventListener('click', () => {
             const url = new URL(window.location.href);
             url.searchParams.set('uiLang', lang);
-            url.hash = window.location.hash; // 保留 hash
+            url.hash = window.location.hash;
             window.history.pushState({}, '', url.toString());
-            init(); // 重新初始化，使用新的 UI 语言
+            return init();
         });
         container.appendChild(btn);
     }
@@ -331,9 +353,9 @@ function renderUI(
     if (linksContainer) {
         linksContainer.innerHTML = '';
         const links = [
-            { url: 'https://modrinth.com/mod/end-poem-extension', text: tUI('ui.modrinth'), badge: 'Mod' },
+            { url: 'https://modrinth.com/mod/end-poem-extension', text: tUI('ui.modrinth'), badge: tUI('ui.badge_mod') },
             { url: 'https://github.com/Featurehouse/epx_packs', text: tUI('ui.source_repo'), badge: tUI('ui.contrib') },
-            { url: 'https://www.mcmod.cn/class/10478.html', text: 'MCMOD', badge: '中文' }
+            { url: 'https://www.mcmod.cn/class/10478.html', text: 'MCMOD', badge: tUI('ui.badge_chinese') }
         ];
         for (const link of links) {
             const a = document.createElement('a');
@@ -378,6 +400,7 @@ function selectUILanguage(): UILang {
 
 // 主入口
 async function init(): Promise<void> {
+    let tUI: ((key: string, fallback?: string) => string) | null = null
     try {
         const response = await fetch('./translation_metadata.json');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -386,9 +409,16 @@ async function init(): Promise<void> {
 
         const uiLang = selectUILanguage();
         const uiPack = UI_I18N[uiLang];
-        const tUI = (key: string, fallback?: string): string => {
+        tUI = (key: string, fallback?: string): string => {
             return uiPack[key] ?? UI_I18N['en-US'][key] ?? fallback ?? key;
         };
+
+        // 设置页面标题和副标题（动态更新）
+        document.title = tUI('ui.page_title');
+        const heroTitle = document.querySelector('.hero h1');
+        const heroSub = document.querySelector('.hero .sub');
+        if (heroTitle) heroTitle.textContent = tUI('ui.page_title');
+        if (heroSub) heroSub.textContent = tUI('ui.page_subtitle');
 
         const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
 
@@ -421,7 +451,11 @@ async function init(): Promise<void> {
             errorDiv.style.color = '#b91c1c';
             errorDiv.style.padding = '2rem';
             errorDiv.style.textAlign = 'center';
-            errorDiv.textContent = '⚠️ 加载鸣谢数据失败，请检查网络或刷新重试。';
+            const translateUI = tUI ?? function(key, fallback) {
+                return UI_I18N['en-US'][key] ?? fallback ?? key
+            }
+
+            errorDiv.textContent = translateUI('ui.error_load');
             container.appendChild(errorDiv);
         }
     }
@@ -440,10 +474,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const hero = document.createElement('div');
             hero.className = 'hero';
             const title = document.createElement('h1');
-            title.textContent = 'EPX Recommended Pack — 翻译鸣谢';
+            // 临时占位，稍后会被 tUI 覆盖
+            title.textContent = '';
             const sub = document.createElement('div');
             sub.className = 'sub';
-            sub.textContent = '社区翻译贡献者及许可信息';
+            sub.textContent = '';
             hero.appendChild(title);
             hero.appendChild(sub);
             container.prepend(hero);
