@@ -106,7 +106,7 @@ function safeUrl(urlString: string, baseUrl: string | null): string | null {
     }
 }
 
-// 递归构建 metadata 的 DOM 元素
+// 递归构建 metadata 的 DOM 元素（prefix 仅用于翻译键的拼接，不参与 URL 处理）
 function buildMetadataElement(
     metadata: Record<string, any>,
     tUI: (key: string, fallback?: string) => string,
@@ -160,7 +160,7 @@ function buildMetadataElement(
             const valSpan = document.createElement('span');
             valSpan.className = 'metadata-value';
             const strValue = value === null || value === undefined ? '' : String(value);
-            // We mustn't use baseUrl here, metadata links must be absolute
+            // metadata 中的链接必须是绝对 URL，故 baseUrl 传 null
             const validatedUrl = safeUrl(strValue, null);
             if (validatedUrl) {
                 const link = document.createElement('a');
@@ -253,7 +253,8 @@ function buildLangPanel(
         if (item.metadata && Object.keys(item.metadata).length) {
             const metadataBlock = document.createElement('div');
             metadataBlock.className = 'metadata-block';
-            metadataBlock.appendChild(buildMetadataElement(item.metadata, tUI, baseUrl));
+            // 修复：此处不应传递 baseUrl，因为 buildMetadataElement 的第三个参数是 prefix
+            metadataBlock.appendChild(buildMetadataElement(item.metadata, tUI));
             itemDiv.appendChild(metadataBlock);
         }
 
@@ -288,7 +289,7 @@ function buildUILangSwitcher(currentLang: UILang, tUI: (key: string, fallback?: 
             url.searchParams.set('uiLang', lang);
             url.hash = window.location.hash;
             window.history.pushState({}, '', url.toString());
-            init();
+            return init();
         });
         container.appendChild(btn);
     }
@@ -441,7 +442,6 @@ function reorganizeLayout(): void {
         leftArea.innerHTML = '';
         leftArea.appendChild(uiSwitcher);
     } else {
-        // 若尚未创建，留空等待 init 填充
         leftArea.innerHTML = '';
     }
 
@@ -450,7 +450,6 @@ function reorganizeLayout(): void {
     if (langBar) {
         rightArea.innerHTML = '';
         rightArea.appendChild(langBar);
-        // 移除 lang-bar 原来的 margin-bottom，因为现在由 top-bar 控制间距
         langBar.style.marginBottom = '0';
         langBar.style.justifyContent = 'flex-end';
     }
@@ -480,7 +479,6 @@ async function init(): Promise<void> {
 
         const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
 
-        // 确保布局重组（只执行一次，但每次 init 都调用以保证 DOM 正确）
         reorganizeLayout();
 
         // 创建或获取 UI 语言切换器容器并填充
@@ -492,18 +490,15 @@ async function init(): Promise<void> {
         uiSwitcherContainer.innerHTML = '';
         uiSwitcherContainer.appendChild(buildUILangSwitcher(uiLang, tUI));
 
-        // 确保 leftArea 包含切换器
         const leftArea = document.getElementById('ui-lang-area');
         if (leftArea) {
             leftArea.innerHTML = '';
             leftArea.appendChild(uiSwitcherContainer);
         } else {
-            // 降级：直接追加到 top-bar 左侧
             const topBar = document.getElementById('control-top-bar');
             if (topBar) topBar.prepend(uiSwitcherContainer);
         }
 
-        // 确保 lang-bar 位于 rightArea
         const langBar = document.getElementById('lang-bar');
         if (langBar) {
             const rightArea = document.getElementById('translation-lang-area');
@@ -559,7 +554,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const bar = document.createElement('div');
             bar.id = 'lang-bar';
             bar.className = 'lang-bar';
-            // 先临时添加到容器，后续 reorganizeLayout 会移动
             container.appendChild(bar);
         }
         if (!document.getElementById('credits-grid')) {
