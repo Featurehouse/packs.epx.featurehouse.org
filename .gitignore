@@ -7,3 +7,8 @@
 *.iml
 *.ipr
 *.iws
+
+node_modules/
+dist/
+
+.proxyai/

@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^24.13.0",
+    "@types/proper-url-join": "^2.1.5",
+    "esbuild": "^0.28.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
+  },
+  "scripts": {},
+  "dependencies": {
+    "@types/file-saver": "^2.0.7",
+    "buffer": "^6.0.3",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
+    "proper-url-join": "^2.1.2",
+    "zod": "^4.4.3"
+  }
+}

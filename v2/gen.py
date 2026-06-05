@@ -23,12 +23,12 @@ import datetime
 
 _HERE = os.path.dirname(sys.argv[0])
 # ROOT = os.path.join(_HERE, '..')
-METADATA = os.path.join(_HERE, 'translation_metadata.json')
+METADATA = os.path.join(_HERE, '../public/v2/translation_metadata.json')
 METADATA_STATIC = os.path.join(_HERE, 'static.json')
 METADATA_DYNAMIC = os.path.join(_HERE, 'dynamic_other.json')
 SPLASH_DIR = os.path.join(_HERE, 'splashes')
 WEB_ROOT = '/'
-DEST = os.path.join(_HERE, 'dl/zipconfig.json')
+DEST = os.path.join(_HERE, '../dist/v2/dl/zipconfig.json')
 
 def readjson(fn):
     with open(fn, encoding='utf8') as f:
