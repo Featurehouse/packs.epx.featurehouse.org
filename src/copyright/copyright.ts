@@ -1,21 +1,15 @@
 // src/copyright/copyright.ts
 import { TranslationMetadataSchema, type TranslationMetadata } from '../schema/translation-metadata.js';
-// 以下导入仅用于类型推导，运行时不需要 file-spec 的具体逻辑
-// import type { RemoteFile, ZipConfig } from '../schema/file-spec.js';
 
-// ---------- 类型与常量定义 ----------
-interface I18nMap {
-    [key: string]: {
-        [key: string]: string;
-    };
-}
+// ---------- 界面语言配置 ----------
+const UI_SUPPORTED_LANGS = ['en-US', 'zh-CN', 'zh-TW'] as const;
+type UILang = typeof UI_SUPPORTED_LANGS[number];
 
-// 预定义界面文本（与原本保持一致，补充缺失键）
-const I18N_TEXTS: I18nMap = {
+const UI_I18N: Record<UILang, Record<string, string>> = {
     'en-US': {
         'lang.en_us': 'English (US)',
         'lang.zh_cn': 'Chinese (Simplified)',
-        'lang.lzh': 'Literal Chinese',
+        'lang.lzh': 'Literary Chinese',
         'lang.zh_hk': 'Chinese (Traditional, HK)',
         'lang.zh_tw': 'Chinese (Traditional, TW)',
         'metadata.author': 'Author',
@@ -26,8 +20,8 @@ const I18N_TEXTS: I18nMap = {
         'ui.raw': 'Raw Text',
         'ui.demo': 'Demo',
         'ui.links': '🔗 Links',
-        'ui.source_repo': 'Repository of EPX Recommended Packs',
         'ui.modrinth': 'End Poem Extension',
+        'ui.source_repo': 'EPX Recommended Pack Repository',
         'ui.mcmod': 'MCMOD',
         'ui.contrib': 'Contribute!',
     },
@@ -45,8 +39,8 @@ const I18N_TEXTS: I18nMap = {
         'ui.raw': '原文链接',
         'ui.demo': '演示链接',
         'ui.links': '🔗 相关链接',
+        'ui.modrinth': '终末诗篇扩展',
         'ui.source_repo': 'EPX 推荐包仓库',
-        'ui.modrinth': '终末之诗扩展补丁',
         'ui.mcmod': 'MC百科',
         'ui.contrib': '参与贡献',
     },
@@ -64,14 +58,14 @@ const I18N_TEXTS: I18nMap = {
         'ui.raw': '原文連結',
         'ui.demo': '演示連結',
         'ui.links': '🔗 相關連結',
+        'ui.modrinth': '終末詩篇擴展',
         'ui.source_repo': 'EPX 推薦包倉庫',
-        'ui.modrinth': '終末之詩擴展補丁',
         'ui.mcmod': 'MC百科',
         'ui.contrib': '參與貢獻',
     }
 };
 
-// 辅助函数：将 snake_case 转为首字母大写词组（用于回退显示）
+// 辅助：将 snake_case 转为首字母大写（用于回退显示）
 function capitalizeSnake(str: string): string {
     if (!str) return '';
     return str.split('_')
@@ -80,42 +74,44 @@ function capitalizeSnake(str: string): string {
         .join(' ');
 }
 
-// 递归遍历 metadata 对象，生成 HTML 片段（新版轻量递归渲染）
+// 简单转义 HTML
+function escapeHtml(str: string): string {
+    return str.replace(/[&<>]/g, (m) => {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+// 递归渲染 metadata 对象
 function renderMetadata(
     metadata: Record<string, any>,
-    getTranslation: (key: string, defaultVal?: string) => string,
+    tUI: (key: string, fallback?: string) => string,
     prefix = ''
 ): string {
     let html = '<ul class="metadata-list">';
-    const entries = Object.entries(metadata);
-    for (const [key, value] of entries) {
+    for (const [key, value] of Object.entries(metadata)) {
         const fullKey = prefix ? `${prefix}.${key}` : key;
         const transKey = `metadata.${fullKey}`;
-        const label = getTranslation(transKey, capitalizeSnake(key));
+        const label = tUI(transKey, capitalizeSnake(key));
 
-        // 处理嵌套对象或数组
         if (value && typeof value === 'object') {
             if (Array.isArray(value)) {
-                // 数组展示为多项列表
-                html += `<li><span class="metadata-key">${label}:</span>
-                         <ul class="nested-list">`;
+                html += `<li><span class="metadata-key">${label}:</span><ul class="nested-list">`;
                 for (const item of value) {
                     if (typeof item === 'object' && item !== null) {
-                        html += `<li>${renderMetadata(item, getTranslation, '')}</li>`;
+                        html += `<li>${renderMetadata(item, tUI, '')}</li>`;
                     } else {
                         html += `<li class="metadata-value">${escapeHtml(String(item))}</li>`;
                     }
                 }
                 html += `</ul></li>`;
             } else {
-                // 对象: 递归展示，并加一个折叠标识
-                html += `<li><span class="metadata-key">${label}</span>
-                         <div class="nested-metadata">${renderMetadata(value, getTranslation, fullKey)}</div>
-                         </li>`;
+                html += `<li><span class="metadata-key">${label}</span><div class="nested-metadata">${renderMetadata(value, tUI, fullKey)}</div></li>`;
             }
         } else {
-            const strValue = value === null || value === undefined ? '' : String(value);
-            // 自动将链接转为可点击链接
+            let strValue = value === null || value === undefined ? '' : String(value);
             let displayValue = escapeHtml(strValue);
             if (strValue.match(/^https?:\/\//i)) {
                 displayValue = `<a href="${escapeHtml(strValue)}" target="_blank" rel="noopener noreferrer">${escapeHtml(strValue)}</a>`;
@@ -127,64 +123,55 @@ function renderMetadata(
     return html;
 }
 
-// 简单的防XSS
-function escapeHtml(str: string): string {
-    return str.replace(/[&<>]/g, function (m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function (c) {
-        return c;
-    });
-}
-
-// 选择最佳语言
-function selectLanguage(supportedLangs: string[], browserLanguages: readonly string[]): string {
-    for (const lang of browserLanguages) {
-        if (supportedLangs.includes(lang)) return lang;
-        // 处理带region的降级: 'zh-CN' -> 'zh'
+// 选择界面语言（基于浏览器偏好）
+function selectUILanguage(): UILang {
+    const browserLangs = navigator.languages || [navigator.language];
+    for (const lang of browserLangs) {
+        // 精确匹配
+        if (UI_SUPPORTED_LANGS.includes(lang as UILang)) return lang as UILang;
+        // 降级：zh -> zh-CN, en -> en-US
         const base = lang.split('-')[0];
-        if (supportedLangs.includes(base)) return base;
+        if (base === 'zh') return 'zh-CN';
+        if (base === 'en') return 'en-US';
     }
     return 'en-US';
 }
 
-// 构建单个语言板块的HTML
+// 构建单个语言板块的 HTML
 function buildLangPanel(
-    langCode: string,
-    translationsArray: any[],
-    t: (key: string, fallback?: string) => string,
+    langCode: string,           // 例如 'zh_cn', 'en_us', 'lzh'
+    translations: any[],
+    tUI: (key: string, fallback?: string) => string,
     baseUrl: string
 ): string {
-    const langDisplayName = t(`lang.${langCode}`, langCode);
+    const displayName = tUI(`lang.${langCode}`, langCode);
     let itemsHtml = '';
-    translationsArray.forEach((item, idx) => {
+    for (let idx = 0; idx < translations.length; idx++) {
+        const item = translations[idx];
         const rawUrl = new URL(item.raw, baseUrl).href;
         const demoUrl = new URL(item.demo, baseUrl).href;
 
-        // 渲染元数据（支持 see_also 等复杂结构）
         let metadataHtml = '';
         if (item.metadata && Object.keys(item.metadata).length) {
-            metadataHtml = `<div class="metadata-block">${renderMetadata(item.metadata, t)}</div>`;
+            metadataHtml = `<div class="metadata-block">${renderMetadata(item.metadata, tUI)}</div>`;
         }
 
         itemsHtml += `
             <div class="translation-item">
                 <div class="item-index">#${idx + 1}</div>
                 <div class="link-group">
-                    <a href="${escapeHtml(rawUrl)}" target="_blank" rel="noopener">${t('ui.raw', 'Raw Text')}</a>
-                    <a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener">${t('ui.demo', 'Demo')}</a>
+                    <a href="${escapeHtml(rawUrl)}" target="_blank" rel="noopener">${tUI('ui.raw')}</a>
+                    <a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener">${tUI('ui.demo')}</a>
                 </div>
                 ${metadataHtml}
             </div>
         `;
-    });
+    }
 
     return `
         <div class="lang-card" data-lang="${langCode}">
             <div class="card-header">
-                <h2>${escapeHtml(langDisplayName)} <span class="lang-badge">${langCode}</span></h2>
+                <h2>${escapeHtml(displayName)} <span class="lang-badge">${langCode}</span></h2>
             </div>
             <div class="translation-list">
                 ${itemsHtml}
@@ -193,43 +180,44 @@ function buildLangPanel(
     `;
 }
 
-// 渲染整个页面（包括语言卡片和底部链接）
+// 渲染整个页面
 function renderUI(
     metadata: TranslationMetadata,
-    currentLang: string,
-    t: (key: string, fallback?: string) => string,
+    tUI: (key: string, fallback?: string) => string,
     baseUrl: string
 ): void {
     const container = document.getElementById('credits-grid');
     const langBar = document.getElementById('lang-bar');
     if (!container) return;
 
-    // 收集所有可用语言（从 other_i18n 加 translations 键）
-    const allLanguages = new Set<string>();
-    allLanguages.add('zh_cn'); // translations 字段映射为 zh_cn
+    // 收集所有可用翻译语言（板块）
+    const translationLangs = new Set<string>();
+    translationLangs.add('zh_cn');   // translations 字段对应简体中文
     for (const lang of Object.keys(metadata.other_i18n || {})) {
-        allLanguages.add(lang);
+        translationLangs.add(lang);
     }
-    const langList = Array.from(allLanguages).sort();
+    const langList = Array.from(translationLangs).sort();
 
-    // 构建语言切换按钮
+    // 生成语言切换按钮（按界面文本显示）
     if (langBar) {
         langBar.innerHTML = '';
         for (const lang of langList) {
             const btn = document.createElement('button');
-            btn.textContent = t(`lang.${lang}`, lang);
+            btn.textContent = tUI(`lang.${lang}`, lang);
             btn.classList.add('lang-btn');
-            if (lang === currentLang) btn.classList.add('active');
+            // 高亮当前显示的板块？不，切换的是“可见性”？原设计未做筛选，此处保留按钮仅用于跳转锚点
             btn.addEventListener('click', () => {
-                // 更新URL hash或者重新渲染
-                window.history.replaceState(null, '', `#${lang}`);
-                initializePage(lang);
+                const targetCard = document.querySelector(`.lang-card[data-lang="${lang}"]`);
+                if (targetCard) {
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                window.location.hash = lang;
             });
             langBar.appendChild(btn);
         }
     }
 
-    // 生成卡片: 对于 zh_cn 特殊处理，展示 metadata.translations
+    // 渲染所有板块卡片
     let cardsHtml = '';
     for (const lang of langList) {
         let items: any[] = [];
@@ -239,113 +227,113 @@ function renderUI(
             items = metadata.other_i18n?.[lang] || [];
         }
         if (items.length === 0) continue;
-        cardsHtml += buildLangPanel(lang, items, t, baseUrl);
+        cardsHtml += buildLangPanel(lang, items, tUI, baseUrl);
     }
     container.innerHTML = cardsHtml;
 
-    // 底部链接区（保留原有关键链接）
+    // 底部链接区
     const linksContainer = document.getElementById('links-section');
     if (linksContainer) {
         linksContainer.innerHTML = `
             <a href="https://modrinth.com/mod/end-poem-extension" target="_blank" rel="noopener">
-                ${t('ui.modrinth', 'End Poem Extension')} <span class="tag-badge">Mod</span>
+                ${tUI('ui.modrinth')} <span class="tag-badge">Mod</span>
             </a>
             <a href="https://github.com/Featurehouse/epx_packs" target="_blank" rel="noopener">
-                ${t('ui.source_repo', 'Repository of EPX Recommended Packs')} 
-                <span class="tag-badge">${t('ui.contrib', 'Contribute!')}</span>
+                ${tUI('ui.source_repo')} 
+                <span class="tag-badge">${tUI('ui.contrib')}</span>
             </a>
             <a href="https://www.mcmod.cn/class/10478.html" target="_blank" rel="noopener">
                 MCMOD <span class="tag-badge">中文</span>
             </a>
         `;
     }
-}
 
-// 获取当前浏览器最佳语言（优先检测 hash，其次浏览器语言）
-function getEffectiveLanguage(supportedLangs: string[]): string {
+    // 处理 hash 滚动
     const hash = window.location.hash.slice(1);
-    if (hash && supportedLangs.includes(hash)) return hash;
-    const browserLangs = navigator.languages || [navigator.language];
-    return selectLanguage(supportedLangs, browserLangs);
+    if (hash) {
+        setTimeout(() => {
+            const target = document.querySelector(`.lang-card[data-lang="${hash}"]`);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
 }
 
-// 主入口：拉取翻译元数据，渲染界面
-async function initializePage(forcedLang: string | null): Promise<void> {
+// 主入口
+async function init(): Promise<void> {
     try {
-        // 1. 获取 translation_metadata.json （相对路径）
+        // 1. 获取翻译元数据
         const response = await fetch('./translation_metadata.json');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const jsonData = await response.json();
+        const metadata = TranslationMetadataSchema.parse(jsonData);
 
-        // 2. 验证数据结构
-        const metadata = TranslationMetadataSchema.parse(jsonData) as TranslationMetadata;
-
-        // 3. 确定语言
-        const availableLangs = Object.keys(metadata.other_i18n || {}).concat('zh_cn');
-        const currentLang = forcedLang ?? getEffectiveLanguage(availableLangs);
-
-        // 4. 获取翻译函数
-        const i18nPack = I18N_TEXTS[currentLang] || I18N_TEXTS['en-US'];
-        const t = (key: string, fallback?: string): string => {
-            return i18nPack[key] ?? I18N_TEXTS['en-US'][key] ?? fallback ?? key;
+        // 2. 选择界面语言
+        const uiLang = selectUILanguage();
+        const uiPack = UI_I18N[uiLang];
+        const tUI = (key: string, fallback?: string): string => {
+            return uiPack[key] ?? UI_I18N['en-US'][key] ?? fallback ?? key;
         };
 
-        // 5. 确定 baseUrl (用来拼接 raw/demo 的相对路径)
+        // 3. 基础 URL（用于拼接相对路径）
         const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
 
-        // 6. 渲染UI
-        renderUI(metadata, currentLang, t, baseUrl);
+        // 4. 渲染
+        renderUI(metadata, tUI, baseUrl);
 
-        // 更新文档语言属性
-        document.documentElement.lang = currentLang;
+        // 设置文档语言
+        document.documentElement.lang = uiLang.toLowerCase();
     } catch (err) {
         console.error('Failed to load credits:', err);
         const container = document.getElementById('credits-grid');
         if (container) {
-            container.innerHTML = `<div class="error-message" style="color:red;padding:2rem;">⚠️ 加载鸣谢数据失败，请检查网络或刷新重试。</div>`;
+            container.innerHTML = `<div class="error-message" style="color:#b91c1c;padding:2rem;text-align:center;">⚠️ 加载鸣谢数据失败，请检查网络或刷新重试。</div>`;
         }
     }
 }
 
-// 等待 DOM 加载完成后启动
+// 等待 DOM 并注入必要容器
 document.addEventListener('DOMContentLoaded', () => {
-    // 注入页面所需 DOM 结构（如果已有则复用，但为了保证完整，动态确保容器存在）
     if (!document.getElementById('credits-grid')) {
-        // const main = document.querySelector('.credits-container') || document.body;
-        const gridDiv = document.createElement('div');
-        gridDiv.id = 'credits-grid';
-        gridDiv.className = 'credits-grid';
-        const linksDiv = document.createElement('div');
-        linksDiv.id = 'links-section';
-        linksDiv.className = 'links-section';
-        const barDiv = document.createElement('div');
-        barDiv.id = 'lang-bar';
-        barDiv.className = 'lang-bar';
-
-        // 确保主容器存在
-        let container = document.querySelector('.credits-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.className = 'credits-container';
-            document.body.prepend(container);
+        const containerDiv = document.querySelector('.credits-container');
+        if (!containerDiv) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'credits-container';
+            document.body.prepend(wrapper);
         }
-        container.prepend(barDiv);
-        container.appendChild(gridDiv);
-        container.appendChild(linksDiv);
-
-        // 添加hero标题（若不存在）
+        const container = document.querySelector('.credits-container')!;
         if (!document.querySelector('.hero')) {
             const hero = document.createElement('div');
             hero.className = 'hero';
             hero.innerHTML = `<h1>EPX Recommended Pack — 翻译鸣谢</h1><div class="sub">社区翻译贡献者及许可信息</div>`;
             container.prepend(hero);
         }
+        if (!document.getElementById('lang-bar')) {
+            const bar = document.createElement('div');
+            bar.id = 'lang-bar';
+            bar.className = 'lang-bar';
+            container.appendChild(bar);
+        }
+        if (!document.getElementById('credits-grid')) {
+            const grid = document.createElement('div');
+            grid.id = 'credits-grid';
+            grid.className = 'credits-grid';
+            container.appendChild(grid);
+        }
+        if (!document.getElementById('links-section')) {
+            const links = document.createElement('div');
+            links.id = 'links-section';
+            links.className = 'links-section';
+            container.appendChild(links);
+        }
     }
-    return initializePage(null);
+    return init();
 });
 
-// 监听 hash 变化以切换语言
+// 监听 hash 变化，滚动到对应卡片
 window.addEventListener('hashchange', () => {
-    const hashLang = window.location.hash.slice(1);
-    return initializePage(hashLang || null)
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+        const card = document.querySelector(`.lang-card[data-lang="${hash}"]`);
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 });
