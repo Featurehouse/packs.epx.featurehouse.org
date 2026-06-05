@@ -1,5 +1,6 @@
 // src/copyright/copyright.ts
 import { TranslationMetadataSchema, type TranslationMetadata } from '../schema/translation-metadata.js';
+import './copyright.css'
 
 // ---------- 界面语言配置 ----------
 const UI_SUPPORTED_LANGS = ['en-US', 'zh-CN', 'zh-TW'] as const;
