@@ -9,6 +9,7 @@
 *.iws
 
 node_modules/
-dist/
+dist/*
+!dist/.keep
 
 .proxyai/
