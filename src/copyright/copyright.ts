@@ -7,26 +7,22 @@ type UILang = typeof UI_SUPPORTED_LANGS[number];
 
 const UI_I18N: Record<UILang, Record<string, string>> = {
     'en-US': {
-        // 界面通用
         'ui.page_title': 'EPX Recommended Pack — Credits',
         'ui.page_subtitle': 'Community translation contributors and license information',
         'ui.invalid_link': 'Invalid URL',
         'ui.error_load': '⚠️ Failed to load credits data. Please check your network and refresh.',
         'ui.badge_mod': 'Mod',
         'ui.badge_chinese': '中文',
-        // 翻译板块语言名称
         'lang.en_us': 'English (US)',
         'lang.zh_cn': 'Chinese (Simplified)',
         'lang.lzh': 'Literary Chinese',
         'lang.zh_hk': 'Chinese (Traditional, HK)',
         'lang.zh_tw': 'Chinese (Traditional, TW)',
-        // 元数据字段
         'metadata.author': 'Author',
         'metadata.link': 'Link',
         'metadata.homepage': 'Homepage',
         'metadata.license': 'License',
         'metadata.see_also': 'See also',
-        // 界面按钮/链接
         'ui.raw': 'Raw Text',
         'ui.demo': 'Demo',
         'ui.links': '🔗 Links',
@@ -110,7 +106,7 @@ function safeUrl(urlString: string, baseUrl: string): string | null {
     }
 }
 
-// 递归构建 metadata 的 DOM 元素（完全安全，无字符串拼接）
+// 递归构建 metadata 的 DOM 元素
 function buildMetadataElement(
     metadata: Record<string, any>,
     tUI: (key: string, fallback?: string) => string,
@@ -274,8 +270,7 @@ function buildUILangSwitcher(currentLang: UILang, tUI: (key: string, fallback?: 
     container.className = 'ui-lang-switcher';
     container.style.display = 'flex';
     container.style.gap = '0.5rem';
-    container.style.justifyContent = 'flex-end';
-    container.style.marginBottom = '1rem';
+    container.style.alignItems = 'center';
 
     const label = document.createElement('span');
     label.textContent = tUI('ui.switch_lang') + ':';
@@ -293,14 +288,14 @@ function buildUILangSwitcher(currentLang: UILang, tUI: (key: string, fallback?: 
             url.searchParams.set('uiLang', lang);
             url.hash = window.location.hash;
             window.history.pushState({}, '', url.toString());
-            return init();
+            init();
         });
         container.appendChild(btn);
     }
     return container;
 }
 
-// 渲染整个页面（纯 DOM 操作）
+// 渲染整个页面
 function renderUI(
     metadata: TranslationMetadata,
     tUI: (key: string, fallback?: string) => string,
@@ -348,7 +343,7 @@ function renderUI(
         container.appendChild(card);
     }
 
-    // 底部链接区（安全构建）
+    // 底部链接区
     const linksContainer = document.getElementById('links-section');
     if (linksContainer) {
         linksContainer.innerHTML = '';
@@ -381,7 +376,7 @@ function renderUI(
     }
 }
 
-// 选择界面语言：优先 URL 参数，其次浏览器语言
+// 选择界面语言
 function selectUILanguage(): UILang {
     const urlParams = new URLSearchParams(window.location.search);
     const paramLang = urlParams.get('uiLang');
@@ -398,9 +393,72 @@ function selectUILanguage(): UILang {
     return 'en-US';
 }
 
+// 重组布局：将 UI 语言切换器和翻译板块切换栏分别置于左右两侧
+function reorganizeLayout(): void {
+    const container = document.querySelector('.credits-container');
+    if (!container) return;
+
+    // 确保 top-bar 存在
+    let topBar = document.getElementById('control-top-bar');
+    if (!topBar) {
+        topBar = document.createElement('div');
+        topBar.id = 'control-top-bar';
+        topBar.style.display = 'flex';
+        topBar.style.justifyContent = 'space-between';
+        topBar.style.alignItems = 'center';
+        topBar.style.marginBottom = '1.5rem';
+        topBar.style.flexWrap = 'wrap';
+        topBar.style.gap = '1rem';
+
+        // 插入到 hero 之后，grid 之前
+        const hero = container.querySelector('.hero');
+        if (hero && hero.nextSibling) {
+            container.insertBefore(topBar, hero.nextSibling);
+        } else {
+            container.appendChild(topBar);
+        }
+    }
+
+    // 确保左右区域存在
+    let leftArea = document.getElementById('ui-lang-area');
+    if (!leftArea) {
+        leftArea = document.createElement('div');
+        leftArea.id = 'ui-lang-area';
+        leftArea.style.display = 'flex';
+        leftArea.style.alignItems = 'center';
+        topBar.prepend(leftArea);
+    }
+    let rightArea = document.getElementById('translation-lang-area');
+    if (!rightArea) {
+        rightArea = document.createElement('div');
+        rightArea.id = 'translation-lang-area';
+        topBar.appendChild(rightArea);
+    }
+
+    // 移动 UI 语言切换器容器到 leftArea
+    let uiSwitcher = document.getElementById('ui-lang-switcher-container');
+    if (uiSwitcher) {
+        leftArea.innerHTML = '';
+        leftArea.appendChild(uiSwitcher);
+    } else {
+        // 若尚未创建，留空等待 init 填充
+        leftArea.innerHTML = '';
+    }
+
+    // 移动原有的 lang-bar 到 rightArea
+    const langBar = document.getElementById('lang-bar');
+    if (langBar) {
+        rightArea.innerHTML = '';
+        rightArea.appendChild(langBar);
+        // 移除 lang-bar 原来的 margin-bottom，因为现在由 top-bar 控制间距
+        langBar.style.marginBottom = '0';
+        langBar.style.justifyContent = 'flex-end';
+    }
+}
+
 // 主入口
 async function init(): Promise<void> {
-    let tUI: ((key: string, fallback?: string) => string) | null = null
+    let tUI: ((key: string, fallback?: string) => string) | null = null;
     try {
         const response = await fetch('./translation_metadata.json');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -413,7 +471,7 @@ async function init(): Promise<void> {
             return uiPack[key] ?? UI_I18N['en-US'][key] ?? fallback ?? key;
         };
 
-        // 设置页面标题和副标题（动态更新）
+        // 设置页面标题和副标题
         document.title = tUI('ui.page_title');
         const heroTitle = document.querySelector('.hero h1');
         const heroSub = document.querySelector('.hero .sub');
@@ -422,21 +480,39 @@ async function init(): Promise<void> {
 
         const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
 
-        // 注入 UI 语言切换器（如果不存在则添加）
+        // 确保布局重组（只执行一次，但每次 init 都调用以保证 DOM 正确）
+        reorganizeLayout();
+
+        // 创建或获取 UI 语言切换器容器并填充
         let uiSwitcherContainer = document.getElementById('ui-lang-switcher-container');
         if (!uiSwitcherContainer) {
-            const hero = document.querySelector('.hero');
-            if (hero) {
-                uiSwitcherContainer = document.createElement('div');
-                uiSwitcherContainer.id = 'ui-lang-switcher-container';
-                uiSwitcherContainer.style.display = 'flex';
-                uiSwitcherContainer.style.justifyContent = 'flex-end';
-                hero.appendChild(uiSwitcherContainer);
-            }
+            uiSwitcherContainer = document.createElement('div');
+            uiSwitcherContainer.id = 'ui-lang-switcher-container';
         }
-        if (uiSwitcherContainer) {
-            uiSwitcherContainer.innerHTML = '';
-            uiSwitcherContainer.appendChild(buildUILangSwitcher(uiLang, tUI));
+        uiSwitcherContainer.innerHTML = '';
+        uiSwitcherContainer.appendChild(buildUILangSwitcher(uiLang, tUI));
+
+        // 确保 leftArea 包含切换器
+        const leftArea = document.getElementById('ui-lang-area');
+        if (leftArea) {
+            leftArea.innerHTML = '';
+            leftArea.appendChild(uiSwitcherContainer);
+        } else {
+            // 降级：直接追加到 top-bar 左侧
+            const topBar = document.getElementById('control-top-bar');
+            if (topBar) topBar.prepend(uiSwitcherContainer);
+        }
+
+        // 确保 lang-bar 位于 rightArea
+        const langBar = document.getElementById('lang-bar');
+        if (langBar) {
+            const rightArea = document.getElementById('translation-lang-area');
+            if (rightArea && langBar.parentElement !== rightArea) {
+                rightArea.innerHTML = '';
+                rightArea.appendChild(langBar);
+                langBar.style.marginBottom = '0';
+                langBar.style.justifyContent = 'flex-end';
+            }
         }
 
         renderUI(metadata, tUI, baseUrl);
@@ -451,10 +527,7 @@ async function init(): Promise<void> {
             errorDiv.style.color = '#b91c1c';
             errorDiv.style.padding = '2rem';
             errorDiv.style.textAlign = 'center';
-            const translateUI = tUI ?? function(key, fallback) {
-                return UI_I18N['en-US'][key] ?? fallback ?? key
-            }
-
+            const translateUI = tUI ?? ((key, fallback) => UI_I18N['en-US'][key] ?? fallback ?? key);
             errorDiv.textContent = translateUI('ui.error_load');
             container.appendChild(errorDiv);
         }
@@ -474,7 +547,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const hero = document.createElement('div');
             hero.className = 'hero';
             const title = document.createElement('h1');
-            // 临时占位，稍后会被 tUI 覆盖
             title.textContent = '';
             const sub = document.createElement('div');
             sub.className = 'sub';
@@ -487,6 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const bar = document.createElement('div');
             bar.id = 'lang-bar';
             bar.className = 'lang-bar';
+            // 先临时添加到容器，后续 reorganizeLayout 会移动
             container.appendChild(bar);
         }
         if (!document.getElementById('credits-grid')) {
@@ -513,5 +586,4 @@ window.addEventListener('hashchange', () => {
     }
 });
 
-// 监听 popstate 事件（浏览器前进后退）重新初始化 UI 语言
 window.addEventListener('popstate', init);
