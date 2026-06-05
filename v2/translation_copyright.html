@@ -79,12 +79,16 @@
             border-color: #94a3b8;
         }
 
-        /* 网格布局 — 鸣谢卡片 */
+        /* 网格布局 — 鸣谢卡片（改为 flex 居中） */
         .credits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 1.8rem;
             margin-bottom: 3rem;
+        }
+        .credits-grid .lang-card {
+            flex: 0 1 360px;
         }
 
         /* 语言卡片 */
@@ -265,7 +269,7 @@
                 padding: 1rem;
             }
             .credits-grid {
-                grid-template-columns: 1fr;
+                gap: 1.2rem;
             }
             .hero h1 {
                 font-size: 1.9rem;
