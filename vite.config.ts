@@ -19,7 +19,7 @@ export default defineConfig({
     plugins: [
         {
             name: 'v2-generate',
-            buildStart() {
+            writeBundle() {
                 generateV2.dumpTimestamp()
                 generateV2.generate()
             }

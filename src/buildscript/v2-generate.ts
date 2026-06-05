@@ -148,5 +148,5 @@ export function dumpTimestamp() {
         timeZone: 'Asia/Shanghai',
         timeZoneName: 'shortOffset',
     })
-    dumpString('timetstamp.txt', '# Build Time\n' + dateString)
+    dumpString('timestamp.txt', '# Build Time\n' + dateString)
 }
