@@ -21,7 +21,7 @@
     "fetch": "nopool/v2/zh_tw.txt"
   },
   "version.txt": {
-    "fetch": "v2/version.txt"
+    "fetch": "timestamp.txt"
   },
   "assets/end_poem_extension/recommended/wakeup.txt": {
     "raw": "\n\n§3Wake up..."
