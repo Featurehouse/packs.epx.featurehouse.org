@@ -34,6 +34,8 @@ function randomIndex(items: { weight: number }[]): number {
 
 export async function generateZipFromUrl(zipConfigUrl: URL, params: URLSearchParams): Promise<Blob> {
     const response = await fetch(zipConfigUrl)
+    if (!response.ok) throw new Error(`Cannot handle zipConfig ${zipConfigUrl}: HTTP ${response.status}`)
+
     const zipConfig: ZipConfig = ZipConfigSchema.parse(await response.json())
     const zip = new JSZip()
 
