@@ -485,7 +485,7 @@ async function init(): Promise<void> {
         if (heroTitle) heroTitle.textContent = tUI('ui.page_title');
         if (heroSub) heroSub.textContent = tUI('ui.page_subtitle');
 
-        const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+        const baseUrl = new URL('/', window.location.href).href;
 
         reorganizeLayout();
 
