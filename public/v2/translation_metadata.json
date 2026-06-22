@@ -33,12 +33,12 @@
       "raw": "raw/0004.txt",
       "demo": "demo/0004-netease-2.txt",
       "metadata": {
-        "author": "NetEase",
-        "link": "https://www.mcbbs.net/forum.php?mod=redirect&goto=findpost&ptid=1404415&pid=27647522",
+        "link": "https://www.bilibili.com/read/cv1342283",
+        "author": "辉夜星瞳",
+        "homepage": "https://space.bilibili.com/282575263",
         "see_also": {
-          "link": "https://www.bilibili.com/read/cv1342283",
-          "author": "辉夜星瞳",
-          "homepage": "https://space.bilibili.com/282575263"
+          "author": "NetEase",
+          "link": "https://www.mcbbs.net/forum.php?mod=redirect&goto=findpost&ptid=1404415&pid=27647522"
         }
       }
     },
@@ -49,7 +49,7 @@
         "author": "Miemiemethod",
         "homepage": "https://zh.minecraft.wiki/w/User:Miemiemethod",
         "link": "https://zh.minecraft.wiki/w/User:Miemiemethod/End_Poem",
-        "license": "CC-BY-SA 3.0"
+        "license": "CC BY-NC-SA 3.0"
       }
     },
     {
@@ -58,7 +58,7 @@
       "metadata": {
         "author": "Olvcpr423",
         "link": "https://zh.minecraft.wiki/w/User:Olvcpr423/End_Poem",
-        "license": "CC-BY-SA 3.0",
+        "license": "CC BY-NC-SA 3.0",
         "homepage": "https://zh.minecraft.wiki/w/User:Olvcpr423"
       }
     },
@@ -76,7 +76,7 @@
       "demo": "demo/0008-mczhwiki.txt",
       "metadata": {
         "link": "https://zh.minecraft.wiki/w/%E7%BB%88%E6%9C%AB%E4%B9%8B%E8%AF%97/%E6%AD%A3%E6%96%87",
-        "license": "CC-BY-NC-SA 3.0"
+        "license": "CC BY-NC-SA 3.0"
       }
     },
     {
@@ -86,7 +86,7 @@
         "link": "https://www.bilibili.com/video/BV1Ex411S7jd",
         "homepage": "https://space.bilibili.com/33794499",
         "author": "Ksharp_青辰",
-        "note": "To improve text fluency, all the 3rd-perspective pronouns are replaced with \"TA\"."
+        "note": "To improve text fluency, all the 3rd-perspective pronouns are replaced with “TA”."
       }
     },
     {
@@ -175,7 +175,8 @@
           "link": "https://www.bilibili.com/video/BV1t64y1472S",
           "author": "望海散人",
           "see_also": {
-            "link": "https://lzh.minecraft.wiki/w/%E7%B5%82%E6%9C%AB%E4%B9%8B%E8%A9%A9/%E6%96%87/%E8%AD%AF%E6%96%87/%E6%9C%9B%E6%B5%B7%E6%95%A3%E4%BA%BA"
+            "link": "https://lzh.minecraft.wiki/w/%E7%B5%82%E6%9C%AB%E4%B9%8B%E8%A9%A9/%E6%96%87/%E8%AD%AF%E6%96%87/%E6%9C%9B%E6%B5%B7%E6%95%A3%E4%BA%BA",
+            "license": "CC BY-NC-SA 3.0"
           }
         }
       },
@@ -185,14 +186,14 @@
         "metadata": {
           "link": "https://lzh.minecraft.wiki/w/%E7%B5%82%E6%9C%AB%E4%B9%8B%E8%A9%A9/%E6%96%87/%E8%AD%AF%E6%96%87/%E4%B8%8A%E5%AE%AE%E8%B1%90%E8%81%B0%E8%80%B3",
           "author": "上宮豐聰耳",
-          "license": "CC BY-SA 3.0"
+          "license": "CC BY-NC-SA 3.0"
         }
       },
       {
         "raw": "raw/lzh-0008.txt",
         "demo": "demo/lzh-0008-fangju.txt",
         "metadata": {
-          "license": "CC BY-SA 3.0",
+          "license": "CC BY-NC-SA 3.0",
           "author": "方矩憶靈",
           "link": "https://lzh.minecraft.wiki/w/%E7%B5%82%E6%9C%AB%E4%B9%8B%E8%A9%A9/%E6%96%87/%E8%AD%AF%E6%96%87/%E6%96%B9%E7%9F%A9%E6%86%B6%E9%9D%88"
         }
@@ -202,7 +203,7 @@
         "demo": "demo/lzh-0009-icewars1o1.txt",
         "weight": 30,
         "metadata": {
-          "license": "CC BY-SA 3.0",
+          "license": "CC BY-NC-SA 3.0",
           "author": "IceWars1o1",
           "link": "https://lzh.minecraft.wiki/w/%E7%B5%82%E6%9C%AB%E4%B9%8B%E8%A9%A9/%E6%96%87/%E8%AD%AF%E6%96%87/IceWars1o1"
         }
