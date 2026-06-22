@@ -49,6 +49,7 @@ body {
     margin-bottom: 2rem;
     gap: 0.5rem;
     flex-wrap: wrap;
+    align-items: center;
 }
 .lang-btn {
     background: white;
@@ -70,6 +71,10 @@ body {
 .lang-btn:hover:not(.active) {
     background: #f1f5f9;
     border-color: #94a3b8;
+}
+.lang-label {
+    font-size: 0.85rem;
+    opacity: 0.8;
 }
 
 /* 网格布局 — 鸣谢卡片（改为 flex 居中） */

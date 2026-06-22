@@ -32,6 +32,7 @@ const UI_I18N: Record<UILang, Record<string, string>> = {
         'ui.mcmod': 'MCMOD',
         'ui.contrib': 'Contribute!',
         'ui.switch_lang': 'UI Language',
+        'ui.content_lang': 'Content Language',
     },
     'zh-CN': {
         'ui.page_title': 'EPX Recommended Pack — 翻译鸣谢',
@@ -58,6 +59,7 @@ const UI_I18N: Record<UILang, Record<string, string>> = {
         'ui.mcmod': 'MC百科',
         'ui.contrib': '参与贡献',
         'ui.switch_lang': '界面语言',
+        'ui.content_lang': '译文语言',
     },
     'zh-TW': {
         'ui.page_title': 'EPX Recommended Pack — 翻譯鳴謝',
@@ -84,6 +86,7 @@ const UI_I18N: Record<UILang, Record<string, string>> = {
         'ui.mcmod': 'MC百科',
         'ui.contrib': '參與貢獻',
         'ui.switch_lang': '界面語言',
+        'ui.content_lang': '譯文語言',
     }
 };
 
@@ -282,8 +285,7 @@ function buildUILangSwitcher(currentLang: UILang, tUI: (key: string, fallback?: 
 
     const label = document.createElement('span');
     label.textContent = tUI('ui.switch_lang') + ':';
-    label.style.fontSize = '0.85rem';
-    label.style.opacity = '0.8';
+    label.classList.add('lang-label');
     container.appendChild(label);
 
     for (const lang of UI_SUPPORTED_LANGS) {
@@ -325,6 +327,11 @@ function renderUI(
 
     // 清空并重新构建翻译板块的语言切换按钮
     langBar.innerHTML = '';
+    const label = document.createElement('span');
+    label.textContent = tUI('ui.content_lang') + ':';
+    label.classList.add('lang-label');
+    langBar.appendChild(label);
+
     for (const lang of langList) {
         const btn = document.createElement('button');
         btn.textContent = tUI(`lang.${lang}`, lang);
