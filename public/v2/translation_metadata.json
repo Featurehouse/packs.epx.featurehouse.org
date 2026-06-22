@@ -106,6 +106,16 @@
         "homepage": "https://center.mcmod.cn/339699",
         "author": "芒果_buff"
       }
+    },
+    {
+      "raw": "raw/0012.txt",
+      "demo": "demo/0012-cnxtt.txt",
+      "metadata": {
+        "link": "https://www.bilibili.com/video/BV1cfj86AEFy",
+        "homepage": "https://space.bilibili.com/1905475245",
+        "author": "MC_XTT",
+        "license": "CC BY-NC-SA 3.0"
+      }
     }
   ],
   "other_i18n": {

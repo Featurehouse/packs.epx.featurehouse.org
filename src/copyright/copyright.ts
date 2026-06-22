@@ -298,7 +298,6 @@ function buildUILangSwitcher(currentLang: UILang, tUI: (key: string, fallback?: 
         btn.addEventListener('click', () => {
             const url = new URL(window.location.href);
             url.searchParams.set('uiLang', lang);
-            url.hash = window.location.hash;
             window.history.pushState({}, '', url.toString());
             return init();
         });
