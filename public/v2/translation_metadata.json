@@ -35,13 +35,11 @@
       "metadata": {
         "author": "NetEase",
         "link": "https://www.mcbbs.net/forum.php?mod=redirect&goto=findpost&ptid=1404415&pid=27647522",
-        "see_also": [
-          {
-            "link": "https://www.bilibili.com/read/cv1342283",
-            "author": "辉夜星瞳",
-            "homepage": "https://space.bilibili.com/282575263"
-          }
-        ]
+        "see_also": {
+          "link": "https://www.bilibili.com/read/cv1342283",
+          "author": "辉夜星瞳",
+          "homepage": "https://space.bilibili.com/282575263"
+        }
       }
     },
     {
@@ -115,7 +113,6 @@
       {
         "raw": "raw/lzh-0001.txt",
         "demo": "demo/lzh-0001-teahouse.txt",
-        "weight": 1000,
         "metadata": {
           "copyright_holder": "Copyright 2020-2021 Teahouse Studios & other contributors",
           "link": "https://github.com/Teahouse-Studios/minecraft-lzh/blob/master/minecraft-lzh/assets/minecraft/texts/end.txt",
@@ -126,6 +123,7 @@
       {
         "raw": "raw/lzh-0002.txt",
         "demo": "demo/lzh-0002-yutu.txt",
+        "weight": 50,
         "metadata": {
           "link": "https://www.bilibili.com/read/cv11980899",
           "homepage": "https://space.bilibili.com/519252472",
@@ -144,6 +142,7 @@
       {
         "raw": "raw/lzh-0004.txt",
         "demo": "demo/lzh-0004-earthhaoduo.txt",
+        "weight": 30,
         "metadata": {
           "link": "https://www.bilibili.com/read/cv12529399",
           "homepage": "https://space.bilibili.com/453462808",
@@ -162,7 +161,6 @@
       {
         "raw": "raw/lzh-0006.txt",
         "demo": "demo/lzh-0006-zr.txt",
-        "weight": 1000,
         "metadata": {
           "link": "https://www.bilibili.com/video/BV1t64y1472S",
           "author": "望海散人",
@@ -174,19 +172,29 @@
       {
         "raw": "raw/lzh-0007.txt",
         "demo": "demo/lzh-0007-shanggong.txt",
-        "weight": 1000,
         "metadata": {
           "link": "https://lzh.minecraft.wiki/w/%E7%B5%82%E6%9C%AB%E4%B9%8B%E8%A9%A9/%E6%96%87/%E8%AD%AF%E6%96%87/%E4%B8%8A%E5%AE%AE%E8%B1%90%E8%81%B0%E8%80%B3",
+          "author": "上宮豐聰耳",
           "license": "CC BY-SA 3.0"
         }
       },
       {
         "raw": "raw/lzh-0008.txt",
         "demo": "demo/lzh-0008-fangju.txt",
-        "weight": 1000,
         "metadata": {
           "license": "CC BY-SA 3.0",
+          "author": "方矩憶靈",
           "link": "https://lzh.minecraft.wiki/w/%E7%B5%82%E6%9C%AB%E4%B9%8B%E8%A9%A9/%E6%96%87/%E8%AD%AF%E6%96%87/%E6%96%B9%E7%9F%A9%E6%86%B6%E9%9D%88"
+        }
+      },
+      {
+        "raw": "raw/lzh-0009.txt",
+        "demo": "demo/lzh-0009-icewars1o1.txt",
+        "weight": 30,
+        "metadata": {
+          "license": "CC BY-SA 3.0",
+          "author": "IceWars1o1",
+          "link": "https://lzh.minecraft.wiki/w/%E7%B5%82%E6%9C%AB%E4%B9%8B%E8%A9%A9/%E6%96%87/%E8%AD%AF%E6%96%87/IceWars1o1"
         }
       }
     ]
