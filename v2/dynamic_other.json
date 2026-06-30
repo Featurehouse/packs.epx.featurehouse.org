@@ -98,6 +98,16 @@
             "raw": "MC_XTT"
           }
         }
+      },
+      {
+        "files": {
+          "assets/end_poem_extension/recommended/postcredits/zh_cn.txt": {
+            "fetch": "epilogue/zh_cn/05-netease.txt"
+          },
+          "assets/end_poem_extension/texts/end_poem/zh_cn.postcredits-author": {
+            "raw": "NetEase"
+          }
+        }
       }
     ]
   }

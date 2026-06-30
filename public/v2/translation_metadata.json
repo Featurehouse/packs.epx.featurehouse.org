@@ -33,13 +33,8 @@
       "raw": "raw/0004.txt",
       "demo": "demo/0004-netease-2.txt",
       "metadata": {
-        "link": "https://www.bilibili.com/read/cv1342283",
-        "author": "辉夜星瞳",
-        "homepage": "https://space.bilibili.com/282575263",
-        "see_also": {
-          "author": "NetEase",
-          "link": "https://www.mcbbs.net/forum.php?mod=redirect&goto=findpost&ptid=1404415&pid=27647522"
-        }
+        "author": "NetEase",
+        "link": "https://www.mcbbs.net/forum.php?mod=redirect&goto=findpost&ptid=1404415&pid=27647522"
       }
     },
     {
@@ -115,6 +110,15 @@
         "homepage": "https://space.bilibili.com/1905475245",
         "author": "MC_XTT",
         "license": "CC BY-NC-SA 3.0"
+      }
+    },
+    {
+      "raw": "raw/0013.txt",
+      "demo": "demo/0013-xingtong.txt",
+      "metadata": {
+        "link": "https://www.bilibili.com/read/cv1342283",
+        "author": "辉夜星瞳",
+        "homepage": "https://space.bilibili.com/282575263"
       }
     }
   ],
