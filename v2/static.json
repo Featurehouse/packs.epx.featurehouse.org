@@ -11,9 +11,6 @@
   "assets/end_poem_extension/recommended/postcredits/zh_tw.txt": {
     "fetch": "nopool/v2/postcredits.zh_hant.txt"
   },
-  "assets/end_poem_extension/recommended/postcredits/zh_cn.txt": {
-    "fetch": "nopool/v2/postcredits.zh_cn.txt"
-  },
   "assets/end_poem_extension/recommended/postcredits/en_us.txt": {
     "raw": ""
   },

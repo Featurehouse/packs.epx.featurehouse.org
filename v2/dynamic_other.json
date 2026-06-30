@@ -55,5 +55,50 @@
         }
       }
     ]
+  },
+  "postcredits-zh-cn": {
+    "default": "random",
+    "items": [
+      {
+        "files": {
+          "assets/end_poem_extension/recommended/postcredits/zh_cn.txt": {
+            "fetch": "epilogue/zh_cn/01-mcwiki.txt"
+          },
+          "assets/end_poem_extension/texts/end_poem/zh_cn.postcredits-author": {
+            "raw": "中文 Minecraft Wiki"
+          }
+        }
+      },
+      {
+        "files": {
+          "assets/end_poem_extension/recommended/postcredits/zh_cn.txt": {
+            "fetch": "epilogue/zh_cn/02-kaleidoscoper.txt"
+          },
+          "assets/end_poem_extension/texts/end_poem/zh_cn.postcredits-author": {
+            "raw": "Kaileido Scoper"
+          }
+        }
+      },
+      {
+        "files": {
+          "assets/end_poem_extension/recommended/postcredits/zh_cn.txt": {
+            "fetch": "epilogue/zh_cn/03-ksharp-m.txt"
+          },
+          "assets/end_poem_extension/texts/end_poem/zh_cn.postcredits-author": {
+            "raw": "Ksharp_青辰 (修订者: teddyxlandlee)"
+          }
+        }
+      },
+      {
+        "files": {
+          "assets/end_poem_extension/recommended/postcredits/zh_cn.txt": {
+            "fetch": "epilogue/zh_cn/04-cnxtt.txt"
+          },
+          "assets/end_poem_extension/texts/end_poem/zh_cn.postcredits-author": {
+            "raw": "MC_XTT"
+          }
+        }
+      }
+    ]
   }
 }
